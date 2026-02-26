@@ -1,0 +1,120 @@
+:root {
+    --bg-color: #f0f2f5;
+    --text-color: #2c3e50;
+    --primary-color: #6C63FF;
+    --secondary-color: #3F3D56;
+    --card-bg: #ffffff;
+    --danger-color: #FF6584;
+    --success-color: #4CAF50;
+    --input-bg: #f9f9f9;
+    --input-border: #e0e0e0;
+    --shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a2e;
+    --text-color: #e6e6e6;
+    --primary-color: #E94560;
+    --secondary-color: #0f3460;
+    --card-bg: #16213e;
+    --danger-color: #ff4757;
+    --success-color: #2ed573;
+    --input-bg: #1e2a4a;
+    --input-border: #2a3b5c;
+    --shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 30px 20px; transition: background-color 0.3s, color 0.3s; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto; }
+
+/* ده التعديل بتاع الخط الجديد (Oi) لكلمة ذاكر */
+.header h1 { 
+    margin: 0; 
+    font-family: 'Cairo', sans-serif; 
+    font-size: 3.5rem; 
+    font-weight: 900; 
+    
+    /* تأثير التدرج اللوني */
+    background: linear-gradient(45deg, var(--primary-color), var(--danger-color));
+    
+    /* دعم كل المتصفحات (ده اللي هيشيل التحذير الأصفر) */
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    
+    /* تأثير الظل المناسب للنص المتدرج الشفاف */
+    filter: drop-shadow(0px 5px 8px rgba(108, 99, 255, 0.3));
+    letter-spacing: -2px; 
+}
+
+.theme-toggle { background-color: var(--card-bg); color: var(--text-color); border: 2px solid var(--primary-color); padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; font-family: 'Cairo', sans-serif; transition: all 0.3s ease; }
+.theme-toggle:hover { background-color: var(--primary-color); color: #fff; }
+
+.screen { display: none; max-width: 1000px; margin: 0 auto; }
+.screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+.card { background-color: var(--card-bg); padding: 30px 20px; border-radius: 20px; text-align: center; box-shadow: var(--shadow); cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
+.card h3 { margin: 0 0 10px 0; font-size: 1.4rem; color: var(--primary-color); }
+.card p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+.card:hover { transform: translateY(-8px); border-color: var(--primary-color); box-shadow: 0 15px 25px rgba(108, 99, 255, 0.2); }
+
+.btn { background-color: var(--primary-color); color: #fff; border: none; padding: 12px 25px; margin: 5px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; font-family: 'Cairo', sans-serif; transition: transform 0.2s, opacity 0.2s; }
+.btn:hover { opacity: 0.9; transform: scale(1.05); }
+.btn-danger { background-color: var(--danger-color); }
+.btn-secondary { background-color: var(--secondary-color); }
+.btn-success { background-color: var(--success-color); }
+.btn-option { display: block; width: 100%; text-align: left; margin-bottom: 15px; background-color: var(--card-bg); color: var(--text-color); border: 2px solid var(--primary-color); font-size: 18px; padding: 15px 20px; border-radius: 12px; direction: ltr; }
+.btn-option:hover { background-color: var(--primary-color); color: #fff; }
+
+.quiz-container, .form-container { background-color: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: var(--shadow); max-width: 800px; margin: 0 auto; }
+.quiz-container h3 { font-size: 1.3rem; line-height: 1.6; margin-bottom: 30px; border-bottom: 2px dashed var(--input-border); padding-bottom: 20px; direction: ltr; text-align: left; }
+.feedback { margin-top: 25px; padding: 20px; border-radius: 12px; display: none; font-weight: bold; line-height: 1.8; font-size: 1.1rem; direction: ltr; text-align: left; }
+.feedback.correct { background-color: rgba(76, 175, 80, 0.1); color: var(--success-color); border: 2px solid var(--success-color); }
+.feedback.wrong { background-color: rgba(255, 101, 132, 0.1); color: var(--danger-color); border: 2px solid var(--danger-color); }
+
+.form-group { margin-bottom: 20px; text-align: right; }
+label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 1.1rem; }
+input[type="text"], select, textarea { width: 100%; padding: 15px; border: 2px solid var(--input-border); border-radius: 10px; background-color: var(--input-bg); color: var(--text-color); box-sizing: border-box; font-family: 'Cairo', sans-serif; font-size: 1rem; transition: border-color 0.3s; }
+input[type="text"]:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-color); }
+.hidden { display: none; }
+.top-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
+/* الإشعارات والنوافذ */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+.modal-content { background-color: var(--card-bg); width: 90%; max-width: 400px; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; }
+#toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+.toast { background-color: var(--card-bg); color: var(--text-color); padding: 15px 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-right: 5px solid var(--primary-color); font-family: 'Cairo', sans-serif; font-weight: bold; animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.4s ease-in forwards 2.6s; direction: rtl; text-align: right; }
+.toast.success { border-right-color: var(--success-color); }
+.toast.error { border-right-color: var(--danger-color); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* الإحصائيات و العداد */
+.dashboard { background: var(--card-bg); padding: 25px; border-radius: 15px; margin-bottom: 40px; box-shadow: var(--shadow); border: 2px solid var(--primary-color); }
+.stats-grid { display: flex; gap: 15px; flex-wrap: wrap; justify-content: space-around; margin-top: 15px;}
+.stat-box { background: var(--input-bg); padding: 15px; border-radius: 10px; text-align: center; flex: 1; min-width: 120px; border: 1px solid var(--input-border);}
+.stat-box h4 { margin: 0 0 10px 0; color: var(--text-color); font-size: 1.1rem; }
+.stat-box span { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); }
+.stat-correct { color: var(--success-color) !important; }
+.stat-wrong { color: var(--danger-color) !important; }
+.exam-timer { font-size: 1.5rem; color: var(--danger-color); font-weight: bold; text-align: center; margin-bottom: 20px; background: rgba(255, 101, 132, 0.1); padding: 10px; border-radius: 10px; border: 1px dashed var(--danger-color);}
+
+/* الشعار التحفيزي */
+.quote-frame { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 40px 30px; border-radius: 20px; margin-top: 20px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden; transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; }
+[data-theme="dark"] .quote-frame { background: rgba(22, 33, 62, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
+.quote-decor { font-family: 'Aref Ruqaa Ink', serif; font-size: 15rem; position: absolute; top: -50px; right: 20px; color: var(--primary-color); opacity: 0.08; font-weight: bold; z-index: 1; }
+.quote-text-main { font-family: 'Aref Ruqaa Ink', serif; font-size: 2.2rem; line-height: 1.8; font-weight: 700; position: relative; z-index: 2; color: var(--primary-color); text-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+[data-theme="dark"] .quote-text-main { color: #ffffff; text-shadow: 0 0 15px rgba(233, 69, 96, 0.4); }
+
+/* قسم النبذة التوضيحية (About Section) */
+.about-section { margin-top: 50px; padding: 30px; border-radius: 15px; background-color: var(--input-bg); border-right: 5px solid var(--primary-color); box-shadow: var(--shadow); line-height: 1.8; }
+.about-section h3 { color: var(--primary-color); margin-top: 0; }
+
+/* زراير الذكاء الاصطناعي الخارجية */
+.btn-ai { border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; font-family: 'Cairo', sans-serif; transition: 0.2s; margin-right: 5px; color: white; }
+.btn-ai.chatgpt { background-color: #10a37f; }
+.btn-ai.gemini { background-color: #8e44ad; }
+.btn-ai:hover { opacity: 0.8; transform: scale(1.05); }
