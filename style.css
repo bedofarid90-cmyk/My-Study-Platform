@@ -1,0 +1,175 @@
+:root {
+    --bg-color: #f8fafc;
+    --text-color: #334155;
+    --primary-color: #6366f1; 
+    --primary-hover: #4f46e5;
+    --secondary-color: #94a3b8;
+    --card-bg: #ffffff;
+    --danger-color: #f43f5e;
+    --success-color: #10b981;
+    --input-bg: #f1f5f9;
+    --input-border: #e2e8f0;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] {
+    --bg-color: #0f172a; 
+    --text-color: #f1f5f9;
+    --primary-color: #818cf8;
+    --primary-hover: #6366f1;
+    --secondary-color: #475569;
+    --card-bg: #1e293b;
+    --danger-color: #fb7185;
+    --success-color: #34d399;
+    --input-bg: #0f172a;
+    --input-border: #334155;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.05);
+}
+
+body { 
+    font-family: 'Cairo', sans-serif; 
+    background-color: var(--bg-color); 
+    color: var(--text-color); 
+    margin: 0; 
+    padding: 20px 20px 60px 20px; 
+    transition: background-color 0.4s ease, color 0.4s ease; 
+}
+
+/* ================= الهيدر ================= */
+.header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 50px; 
+    max-width: 1100px; 
+    margin-left: auto; 
+    margin-right: auto; 
+    padding: 15px 30px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+}
+
+.logo { 
+    margin: 0; 
+    font-family: 'Cairo', sans-serif; 
+    font-size: 2.8rem; 
+    font-weight: 900; 
+    background: linear-gradient(135deg, var(--primary-color), #c084fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    letter-spacing: -1px; 
+}
+
+.header-controls { display: flex; align-items: center; gap: 15px; }
+.settings-group { display: flex; gap: 10px; border-left: 2px solid var(--input-border); padding-left: 15px; margin-left: 5px; }
+
+.icon-btn {
+    background: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.icon-btn:hover { background: var(--primary-color); color: white; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+
+.btn-login { padding: 10px 25px !important; border-radius: 25px !important; font-size: 1rem !important; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+
+.user-profile-badge { display: flex; align-items: center; gap: 12px; background: var(--input-bg); padding: 6px 8px 6px 15px; border-radius: 30px; border: 1px solid var(--input-border); transition: all 0.3s ease; }
+.user-profile-badge img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary-color); }
+.user-profile-badge span { font-weight: 700; font-size: 0.95rem; }
+
+.btn-logout { background: rgba(244, 63, 94, 0.1); color: var(--danger-color); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+.btn-logout:hover { background: rgba(244, 63, 94, 0.2); }
+
+/* ================= التنسيقات العامة والـ Screens ================= */
+.screen { display: none; max-width: 1100px; margin: 0 auto; }
+.screen.active { display: block; animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ================= الكروت (المواد والمحاضرات) ================= */
+.card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+
+.card { 
+    background-color: var(--card-bg); 
+    padding: 30px 25px; 
+    border-radius: 20px; 
+    text-align: center; 
+    box-shadow: var(--shadow); 
+    cursor: pointer; 
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+    border: 1px solid var(--input-border); 
+}
+.card h3 { margin: 0 0 10px 0; font-size: 1.4rem; color: var(--primary-color); font-weight: 800; }
+.card p { margin: 0; font-size: 0.95rem; opacity: 0.7; line-height: 1.6; }
+.card:hover { transform: translateY(-8px); border-color: var(--primary-color); box-shadow: 0 20px 35px rgba(99, 102, 241, 0.15); }
+
+/* ================= الأزرار ================= */
+.btn { background-color: var(--primary-color); color: #ffffff; border: none; padding: 12px 28px; margin: 5px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: 700; font-family: 'Cairo', sans-serif; transition: all 0.3s ease; }
+.btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+.btn-danger { background-color: var(--danger-color); }
+.btn-danger:hover { background-color: #e11d48; }
+.btn-secondary { background-color: var(--secondary-color); color: white;}
+.btn-secondary:hover { background-color: #64748b; }
+.btn-success { background-color: var(--success-color); }
+.btn-success:hover { background-color: #059669; }
+
+/* ================= الإحصائيات (دي اللي كانت بايظة) ================= */
+.dashboard { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 40px; box-shadow: var(--shadow); border: 1px solid var(--input-border); }
+.stats-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-between; margin-top: 25px;}
+.stat-box { background: var(--input-bg); padding: 20px; border-radius: 15px; text-align: center; flex: 1; min-width: 140px; border: 1px solid var(--input-border); transition: transform 0.3s;}
+.stat-box:hover { transform: translateY(-5px); }
+.stat-box h4 { margin: 0 0 10px 0; color: var(--secondary-color); font-size: 1rem; font-weight: 700; }
+.stat-box span { font-size: 2.2rem; font-weight: 900; color: var(--text-color); }
+.stat-correct { color: var(--success-color) !important; }
+.stat-wrong { color: var(--danger-color) !important; }
+
+/* ================= النماذج والمدخلات ================= */
+.form-container, .quiz-container { background-color: var(--card-bg); padding: 40px; border-radius: 25px; box-shadow: var(--shadow); max-width: 850px; margin: 0 auto; border: 1px solid var(--input-border); }
+.form-group { margin-bottom: 20px; text-align: right; }
+label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 1rem; color: var(--text-color); opacity: 0.9;}
+input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 15px; border: 2px solid var(--input-border); border-radius: 12px; background-color: var(--input-bg); color: var(--text-color); box-sizing: border-box; font-family: 'Cairo', sans-serif; font-size: 1rem; transition: all 0.3s; }
+input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+.hidden { display: none !important; }
+
+/* ================= المقولة التحفيزية والنبذة ================= */
+.quote-frame { background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(192, 132, 252, 0.1)); border: 1px solid rgba(99, 102, 241, 0.2); padding: 40px 30px; border-radius: 25px; margin-bottom: 50px; text-align: center; position: relative; transition: all 0.8s ease; max-width: 1100px; margin-left: auto; margin-right: auto;}
+.quote-decor { font-family: 'Aref Ruqaa Ink', serif !important; font-size: 8rem; position: absolute; top: -30px; right: 20px; color: var(--primary-color); opacity: 0.15; line-height: 1; }
+.quote-text-main { font-family: 'Aref Ruqaa Ink', serif !important; font-size: 2.2rem; line-height: 1.6; font-weight: 700; position: relative; z-index: 2; color: var(--primary-color); text-shadow: 0px 2px 10px rgba(99, 102, 241, 0.3) !important; }
+[data-theme="dark"] .quote-text-main { color: #818cf8; text-shadow: 0px 0px 15px rgba(129, 140, 248, 0.4) !important; }
+.about-section { margin-top: 60px; padding: 35px; border-radius: 20px; background: linear-gradient(135deg, rgba(52, 211, 153, 0.05), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: var(--shadow); line-height: 1.8; }
+.about-section h3 { color: var(--success-color); margin-top: 0; font-size: 1.4rem;}
+
+/* ================= الـ Modals والإشعارات ================= */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); z-index: 99999 !important; justify-content: center; align-items: center; }
+.modal-content { background-color: var(--card-bg); width: 90%; max-width: 450px; border-radius: 20px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; border: 1px solid var(--glass-border); }
+#toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 99999; display: flex; flex-direction: column; gap: 15px; }
+.toast { background-color: var(--card-bg); color: var(--text-color); padding: 18px 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-right: 6px solid var(--primary-color); font-weight: 700; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards, fadeOut 0.4s ease-in forwards 3s; direction: rtl; text-align: right; border-left: 1px solid var(--input-border); border-top: 1px solid var(--input-border); border-bottom: 1px solid var(--input-border); }
+.toast.success { border-right-color: var(--success-color); }
+.toast.error { border-right-color: var(--danger-color); }
+
+/* ================= دعم الإنجليزي ================= */
+body[dir="ltr"] { font-family: 'Poppins', sans-serif; }
+body[dir="ltr"] .logo, body[dir="ltr"] .btn, body[dir="ltr"] input, body[dir="ltr"] select, body[dir="ltr"] textarea { font-family: 'Poppins', sans-serif; }
+body[dir="ltr"] .form-group { text-align: left; }
+body[dir="ltr"] .settings-group { border-left: none; border-right: 2px solid var(--input-border); padding-left: 0; padding-right: 15px; margin-left: 0; margin-right: 5px; }
+body[dir="ltr"] .toast { direction: ltr; text-align: left; border-right: 1px solid var(--input-border); border-left: 6px solid var(--primary-color); }
+body[dir="ltr"] .toast.success { border-left-color: var(--success-color); }
+body[dir="ltr"] .toast.error { border-left-color: var(--danger-color); }
