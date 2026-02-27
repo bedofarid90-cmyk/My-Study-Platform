@@ -6,6 +6,9 @@
     <title>Zaker Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
 </head>
 <body data-theme="dark">
 
@@ -135,7 +138,7 @@
                     <p style="font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; opacity: 0.9;" data-i18n="aiDesc">
                         حط المادة العلمية (أو ملخص المحاضرة) هنا، حدد طلبك، وهنعملك "أمر برمجي" تديه للذكاء الاصطناعي عشان يطلعلك الأسئلة بالصيغة المظبوطة!
                     </p>
-                    <textarea id="aiSourceText" rows="5" data-i18n="aiPlaceholder" placeholder="انسخ نص المحاضرة أو اسحب وأفلت الملف النصي (.txt) هنا..."></textarea>
+                    <textarea id="aiSourceText" rows="5" data-i18n="aiPlaceholder" placeholder="انسخ النص أو اسحب وأفلت الملف هنا (PDF, Word, TXT)"></textarea>
                     <div style="display: flex; gap: 15px; margin-top: 15px;">
                         <div class="form-group" style="flex: 1; margin-bottom: 0;">
                             <label data-i18n="aiCountLabel">عدد الأسئلة:</label>
@@ -184,11 +187,6 @@
             
             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span id="quizProgress" style="font-weight: bold; color: var(--primary-color);"></span></div>
             
-            <div id="externalAiControls" style="text-align: left; margin-bottom: 15px;">
-                <button class="btn-ai chatgpt" onclick="askExternalAI('chatgpt')">🧠 ChatGPT</button>
-                <button class="btn-ai gemini" onclick="askExternalAI('gemini')">✨ Gemini</button>
-            </div>
-
             <h3 id="questionText">جاري التحميل...</h3><div id="options"></div><div id="feedback" class="feedback"></div>
             <div id="controls" style="margin-top: 30px; display: none; direction: ltr;"><button class="btn btn-success" id="nextBtn" onclick="nextQuestion()">Next ⏭️</button><button class="btn btn-danger" id="tryAgainBtn" onclick="tryAgain()" style="display: none;">🔄 Try Again</button></div>
         </div>
@@ -206,18 +204,15 @@
     <div id="confirmModal" class="modal-overlay">
         <div class="modal-content"><h3 id="confirmMessage" style="color: var(--text-color); margin-bottom: 25px;" data-i18n="confirmMsg">هل أنت متأكد؟</h3><div style="display: flex; justify-content: center; gap: 15px;"><button class="btn btn-secondary" onclick="closeConfirm()" data-i18n="cancelBtn">إلغاء</button><button class="btn btn-danger" id="confirmBtnYes" data-i18n="agreeBtn">موافق ✅</button></div></div>
     </div>
-    <div id="promptModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="promptMessage" style="color: var(--text-color); margin-bottom: 15px;">...</h3>
-            <input type="text" id="promptInput" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color); font-family: inherit;">
-            <div style="display: flex; justify-content: center; gap: 15px;"><button class="btn btn-secondary" onclick="closePrompt()" data-i18n="cancelBtn">إلغاء</button><button class="btn btn-success" id="promptBtnYes" data-i18n="saveBtn">حفظ 💾</button></div>
-        </div>
-    </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

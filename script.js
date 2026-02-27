@@ -1,5 +1,5 @@
 // =========================================
-// 1. قاموس اللغات (i18n Dictionary) 
+// 1. قاموس اللغات
 // =========================================
 const translations = {
     ar: {
@@ -17,11 +17,10 @@ const translations = {
         opt2Label: "الاختيار الثاني (2):", opt3Label: "الاختيار الثالث (3):", opt4Label: "الاختيار الرابع (4):", correctAnswerLabel: "الإجابة الصحيحة:",
         explanationLabel: "الشرح (اختياري):", saveCloudBtn: "💾 حفظ السؤال سحابياً", aiTitle: "🤖 المولد الذكي (AI Prompt Generator)",
         aiDesc: "حط المادة العلمية (أو ملخص المحاضرة) هنا، حدد طلبك، وهنعملك 'أمر برمجي' تديه للذكاء الاصطناعي عشان يطلعلك الأسئلة بالصيغة المظبوطة!",
-        aiPlaceholder: "انسخ نص المحاضرة أو اسحب وأفلت الملف النصي (.txt) هنا...", aiCountLabel: "عدد الأسئلة:", aiTypeLabel: "نوع الأسئلة:", aiGenBtn: "🪄 توليد ونسخ الأمر السري", pasteTitle: "📥 لصق الأسئلة الجاهزة",
+        aiPlaceholder: "انسخ النص أو اسحب وأفلت الملف هنا (PDF, Word, TXT)", aiCountLabel: "عدد الأسئلة:", aiTypeLabel: "نوع الأسئلة:", aiGenBtn: "🪄 توليد ونسخ الأمر السري", pasteTitle: "📥 لصق الأسئلة الجاهزة",
         pasteDesc: "بعد ما الذكاء الاصطناعي يكتبلك الأسئلة، انسخها كلها وارميها هنا ودوس حفظ.", saveBulkBtn: "⚡ معالجة وحفظ الأسئلة في المحاضرة",
         endExamBtn: "✖️ إنهاء المذاكرة", timeLabel: "⏱️ الوقت:", finalResultTitle: "🎯 النتيجة النهائية", backToLectureBtn: "🔙 رجوع للمحاضرة",
         confirmMsg: "هل أنت متأكد؟", confirmLogout: "هل أنت متأكد من تسجيل الخروج؟", cancelBtn: "إلغاء", agreeBtn: "موافق ✅", saveBtn: "حفظ 💾",
-        // رسائل الجافاسكريبت
         js_demo: "سجل دخول لعرض موادك الحقيقية ومزامنتها...", js_loginReq: "سجل دخول بحساب جوجل الأول! 🔒",
         js_demoReq: "دي نسخة عرض 👀.. سجل دخول عشان تفتحها! 🔒", js_saved: "تم الحفظ سحابياً ☁️", js_deleted: "تم المسح بنجاح 🗑️",
         js_qReq: "ضيف أسئلة الأول!", js_timeUp: "انتهى وقت الامتحان! ⏰", js_copied: "تم نسخ الأمر بنجاح! 📋"
@@ -41,7 +40,7 @@ const translations = {
         opt2Label: "Option (2):", opt3Label: "Option (3):", opt4Label: "Option (4):", correctAnswerLabel: "Correct Answer:",
         explanationLabel: "Explanation (Optional):", saveCloudBtn: "💾 Save to Cloud", aiTitle: "🤖 AI Prompt Generator",
         aiDesc: "Paste the scientific material here, specify your request, and we'll generate a 'prompt' for the AI to output questions in the exact format needed!",
-        aiPlaceholder: "Paste the lecture text or drag & drop a text file (.txt) here...", aiCountLabel: "Question Count:", aiTypeLabel: "Question Type:", aiGenBtn: "🪄 Generate & Copy Prompt", pasteTitle: "📥 Paste Ready Questions",
+        aiPlaceholder: "Paste text or Drag & Drop (PDF, Word, TXT) here...", aiCountLabel: "Question Count:", aiTypeLabel: "Question Type:", aiGenBtn: "🪄 Generate & Copy Prompt", pasteTitle: "📥 Paste Ready Questions",
         pasteDesc: "After the AI generates your questions, paste them all here and click save.", saveBulkBtn: "⚡ Process & Save Questions",
         endExamBtn: "✖️ End Study", timeLabel: "⏱️ Time:", finalResultTitle: "🎯 Final Result", backToLectureBtn: "🔙 Back to Lecture",
         confirmMsg: "Are you sure?", confirmLogout: "Are you sure you want to logout?", cancelBtn: "Cancel", agreeBtn: "Confirm ✅", saveBtn: "Save 💾",
@@ -66,15 +65,13 @@ function applyLanguage() {
     });
     if (currentSubjectKey && document.getElementById('subjectTitle')) document.getElementById('subjectTitle').innerText = currentSubjectName;
     if (currentLectureName && document.getElementById('lectureTitle')) document.getElementById('lectureTitle').innerText = `${currentSubjectName} - ${currentLectureName}`;
-    
-    // تحديث زرار الصوت عشان يترجم
     updateSoundBtn();
 }
 
 function toggleLanguage() { currentLang = currentLang === 'ar' ? 'en' : 'ar'; localStorage.setItem('zaker_lang', currentLang); applyLanguage(); }
 
 // =========================================
-// 2. إعداد السحابة (Firebase)
+// 2. إعداد السحابة
 // =========================================
 const firebaseConfig = {
     apiKey: "AIzaSyBmQqHCyzeScuxLfRyB9KdSvM0817zML1s",
@@ -94,7 +91,7 @@ let currentSubjectKey = '', currentSubjectName = '', currentLectureName = '', cu
 let isExamMode = false, examScore = 0, examTimeLeft = 0, examTimerInterval;
 
 // =========================================
-// 3. نظام تسجيل الدخول والمزامنة
+// 3. نظام تسجيل الدخول
 // =========================================
 function loginWithGoogle() { auth.signInWithPopup(provider).catch(err => alert("Error: " + err.message)); }
 
@@ -112,7 +109,7 @@ auth.onAuthStateChanged(user => {
         document.getElementById('userImg').src = user.photoURL;
         document.getElementById('userName').innerText = user.displayName.split(' ')[0];
         document.getElementById('mainContent').classList.remove('hidden');
-        
+        document.getElementById('quoteText').style.display = 'none'; // إخفاء جملة التسجيل
         changeQuote();
         loadDataFromCloud();
     } else {
@@ -120,8 +117,8 @@ auth.onAuthStateChanged(user => {
         document.getElementById('loginBtn').classList.remove('hidden');
         document.getElementById('userProfile').classList.add('hidden');
         document.getElementById('mainContent').classList.remove('hidden');
+        document.getElementById('quoteText').style.display = 'block';
         document.getElementById('quoteText').innerText = t('js_demo');
-        
         subjectsMeta = { 'demo1': { name: currentLang === 'ar' ? 'تحليل وتصميم النظم' : 'Systems Analysis', icon: '📊' }, 'demo2': { name: currentLang === 'ar' ? 'هياكل البيانات' : 'Data Structures', icon: '💻' } };
         renderSubjects();
     }
@@ -136,7 +133,7 @@ async function loadDataFromCloud() {
             if (!data.college) setTimeout(askForCollege, 1500);
         } else { subjectsMeta = {}; allData = {}; userProgress = {}; saveDataToCloud(); setTimeout(askForCollege, 1500); }
         renderSubjects(); if(currentSubjectKey) updateDashboardUI();
-    } catch (err) { console.error(err); alert("Cloud Data Error!"); }
+    } catch (err) { console.error(err); }
 }
 
 function askForCollege() { customPrompt(currentLang==='ar' ? "إنت بتدرس في كلية/تخصص إيه؟" : "What is your college/major?", currentLang==='ar' ? "مثال: حاسبات ومعلومات" : "e.g., Computer Science", function(collegeName) { if (collegeName && collegeName.trim() !== "") { db.collection('users').doc(currentUser.uid).set({ college: sanitizeInput(collegeName.trim()) }, { merge: true }).then(() => showToast(t('js_saved'))); } }); }
@@ -154,7 +151,6 @@ function renderSubjects() {
         container.innerHTML += `<div class="card" style="position: relative;"><div style="position: absolute; top: 10px; ${currentLang === 'ar' ? 'left: 10px;' : 'right: 10px;'} z-index: 10;"><button onclick="editSubjectMeta('${key}', event)" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">✏️</button><button onclick="deleteSubjectMeta('${key}', event)" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button></div><div onclick="openSubject('${key}', '${meta.name}')" style="height: 100%; display:flex; flex-direction:column; justify-content:center;"><h3>${meta.icon} ${meta.name}</h3></div></div>`;
     }
 }
-
 function addNewSubject() { if (!currentUser) return showToast(t('js_loginReq'), "error"); customPrompt(currentLang==='ar'?"اسم المادة الجديدة:":"New Subject Name:", "", function(subName) { if (!subName || subName.trim() === "") return; let subKey = 'subj_' + Date.now(); subjectsMeta[subKey] = { name: sanitizeInput(subName.trim()), icon: '📚' }; allData[subKey] = {}; saveDataToCloud(); renderSubjects(); showToast(t('js_saved')); }); }
 function editSubjectMeta(key, event) { event.stopPropagation(); if (!currentUser) return showToast(t('js_demoReq'), "error"); customPrompt(currentLang==='ar'?"الاسم الجديد:":"New Name:", subjectsMeta[key].name, function(newName) { if (newName && newName.trim() !== "") { subjectsMeta[key].name = sanitizeInput(newName.trim()); saveDataToCloud(); renderSubjects(); if(currentSubjectKey === key) document.getElementById('subjectTitle').innerText = subjectsMeta[key].name; } }); }
 function deleteSubjectMeta(key, event) { event.stopPropagation(); if (!currentUser) return showToast(t('js_demoReq'), "error"); customConfirm(t('confirmMsg'), function() { delete subjectsMeta[key]; delete allData[key]; delete userProgress[key]; saveDataToCloud(); renderSubjects(); showToast(t('js_deleted')); }); }
@@ -165,7 +161,6 @@ function renderLectures() {
     if (!lectures || Object.keys(lectures).length === 0) return container.innerHTML = `<p style="text-align:center; width:100%; opacity:0.7;">${currentLang === 'ar' ? 'مفيش محاضرات لسه..' : 'No lectures yet..'}</p>`;
     for(let lecName in lectures) { container.innerHTML += `<div class="card" onclick="openLecture('${lecName}')" style="position: relative;"><div style="position: absolute; top: 10px; ${currentLang === 'ar' ? 'left: 10px;' : 'right: 10px;'}"><button onclick="editLecture('${lecName}', event)" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">✏️</button><button onclick="deleteLecture('${lecName}', event)" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button></div><h3>📁 ${lecName}</h3><p style="font-size: 1.1rem; font-weight: bold; margin-top: 10px; color: var(--text-color);">${currentLang==='ar'?'أسئلة:':'Qs:'} ${lectures[lecName].length}</p></div>`; }
 }
-
 function addLecture() { customPrompt(currentLang==='ar'?"اسم المحاضرة:":"Lecture Name:", "", function(lecName) { if(lecName && lecName.trim() !== "") { lecName = sanitizeInput(lecName.trim()); if(!allData[currentSubjectKey][lecName]) { allData[currentSubjectKey][lecName] = []; saveDataToCloud(); renderLectures(); } } }); }
 function editLecture(oldName, event) { event.stopPropagation(); customPrompt(currentLang==='ar'?"الاسم الجديد:":"New Name:", oldName, function(newName) { if (newName && newName.trim() !== "" && newName !== oldName) { newName = sanitizeInput(newName.trim()); allData[currentSubjectKey][newName] = allData[currentSubjectKey][oldName]; delete allData[currentSubjectKey][oldName]; saveDataToCloud(); renderLectures(); } }); }
 function deleteLecture(lecName, event) { event.stopPropagation(); customConfirm(t('confirmMsg'), function() { delete allData[currentSubjectKey][lecName]; saveDataToCloud(); renderLectures(); showToast(t('js_deleted')); }); }
@@ -176,7 +171,7 @@ function updateDashboardUI() { if (!currentSubjectKey) return; initSubjectProgre
 function resetProgress() { customConfirm(t('confirmMsg'), function() { userProgress[currentSubjectKey] = { total: 0, correct: 0, wrong: 0 }; saveDataToCloud(); updateDashboardUI(); }); }
 
 // =========================================
-// 5. إدارة الأسئلة والمولد الذكي
+// 5. إدارة الأسئلة والسحب والإفلات (PDF & Word)
 // =========================================
 function toggleFormFields() { const type = document.getElementById('qType').value; const mcqFields = document.getElementById('mcqFields'); const qAns = document.getElementById('qAnswer'); qAns.innerHTML = ''; if (type === 'mcq') { mcqFields.classList.remove('hidden'); qAns.innerHTML = `<option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>`; } else { mcqFields.classList.add('hidden'); qAns.innerHTML = `<option value="صح">${currentLang==='ar'?'صح':'True'}</option><option value="غلط">${currentLang==='ar'?'غلط':'False'}</option>`; } }
 function openAddQuestion() { editingQuestionIndex = -1; document.getElementById('qType').value = 'tf'; toggleFormFields(); document.getElementById('qText').value = ''; document.getElementById('qExplanation').value = ''; document.getElementById('opt1').value = ''; document.getElementById('opt2').value = ''; document.getElementById('opt3').value = ''; document.getElementById('opt4').value = ''; toggleAddMode('single'); showScreen('addQuestionScreen'); }
@@ -225,6 +220,59 @@ function deleteQuestion(index) { customConfirm(t('confirmMsg'), function() { all
 function editQuestion(index) { /* Edit functionality */ }
 
 // =========================================
+// السحب والإفلات لملفات (TXT, PDF, Word)
+// =========================================
+function setupDragAndDrop() {
+    const aiTextarea = document.getElementById('aiSourceText');
+    if (!aiTextarea) return;
+    aiTextarea.addEventListener('dragover', (e) => { e.preventDefault(); aiTextarea.style.border = '2px dashed var(--success-color)'; aiTextarea.style.backgroundColor = 'rgba(16, 185, 129, 0.05)'; });
+    aiTextarea.addEventListener('dragleave', (e) => { e.preventDefault(); aiTextarea.style.border = '2px dashed var(--primary-color)'; aiTextarea.style.backgroundColor = 'transparent'; });
+    aiTextarea.addEventListener('drop', (e) => {
+        e.preventDefault(); aiTextarea.style.border = '2px dashed var(--primary-color)'; aiTextarea.style.backgroundColor = 'transparent';
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0]; 
+            const fileName = file.name.toLowerCase();
+            showToast(currentLang === 'ar' ? 'جاري استخراج النص... ⏳' : 'Extracting text... ⏳');
+            
+            if (fileName.endsWith('.txt')) {
+                const reader = new FileReader();
+                reader.onload = function(event) { aiTextarea.value = event.target.result; showToast(currentLang === 'ar' ? 'تم! ✅' : 'Done! ✅'); };
+                reader.readAsText(file);
+            } 
+            else if (fileName.endsWith('.pdf')) {
+                const reader = new FileReader();
+                reader.onload = async function() {
+                    try {
+                        const typedarray = new Uint8Array(this.result);
+                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                        let fullText = '';
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            fullText += textContent.items.map(item => item.str).join(' ') + '\n';
+                        }
+                        aiTextarea.value = fullText;
+                        showToast(currentLang === 'ar' ? 'تم استخراج النص من الـ PDF! ✅' : 'PDF extracted! ✅');
+                    } catch(err) { alert("Error reading PDF"); }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+            else if (fileName.endsWith('.docx')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    mammoth.extractRawText({arrayBuffer: event.target.result})
+                        .then(function(result){ aiTextarea.value = result.value; showToast(currentLang === 'ar' ? 'تم استخراج النص من الوورد! ✅' : 'Word extracted! ✅'); })
+                        .catch(function(err) { alert("Error reading Word file"); });
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                alert(currentLang === 'ar' ? 'صيغة غير مدعومة! ارفع TXT, PDF أو DOCX' : 'Unsupported format! Use TXT, PDF, or DOCX');
+            }
+        }
+    });
+}
+
+// =========================================
 // 6. نظام الامتحان والمذاكرة
 // =========================================
 function startQuiz(isExam) {
@@ -266,26 +314,10 @@ function nextQuestionNav() { const qList = allData[currentSubjectKey][currentLec
 function jumpToQuestion(index) { currentQIndex = parseInt(index); loadQuestion(); }
 
 // =========================================
-// 7. المشاركة، السحب والإفلات، والتوجيه
+// 7. أدوات الواجهة والأصوات
 // =========================================
 function exportData() { if(!currentUser) return alert(t('js_loginReq')); const fullBackup = { meta: subjectsMeta, data: allData, progress: userProgress }; const blob = new Blob([JSON.stringify(fullBackup, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `Zaker_Questions_${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
 function importData(event) { if(!currentUser) return alert(t('js_loginReq')); const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const imported = JSON.parse(e.target.result); let impMeta = imported.meta || {}; let impData = imported.data || imported; let addedCount = 0; for (let key in impMeta) { let newKey = 'subj_' + Date.now() + Math.floor(Math.random() * 1000); subjectsMeta[newKey] = impMeta[key]; subjectsMeta[newKey].name = subjectsMeta[newKey].name + (currentLang==='ar'?' (من الدفعة)':' (Imported)'); allData[newKey] = impData[key] || {}; userProgress[newKey] = { total: 0, correct: 0, wrong: 0 }; addedCount++; } if (addedCount > 0) { saveDataToCloud(); renderSubjects(); showToast(t('js_saved')); } } catch (err) { alert('Error reading file!'); } }; reader.readAsText(file); event.target.value = ''; }
-
-function setupDragAndDrop() {
-    const aiTextarea = document.getElementById('aiSourceText');
-    if (!aiTextarea) return;
-    aiTextarea.addEventListener('dragover', (e) => { e.preventDefault(); aiTextarea.style.border = '2px dashed var(--success-color)'; aiTextarea.style.backgroundColor = 'rgba(16, 185, 129, 0.05)'; });
-    aiTextarea.addEventListener('dragleave', (e) => { e.preventDefault(); aiTextarea.style.border = '2px dashed var(--primary-color)'; aiTextarea.style.backgroundColor = 'transparent'; });
-    aiTextarea.addEventListener('drop', (e) => {
-        e.preventDefault(); aiTextarea.style.border = '2px dashed var(--primary-color)'; aiTextarea.style.backgroundColor = 'transparent';
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            const file = e.dataTransfer.files[0]; const reader = new FileReader();
-            reader.onload = function(event) { aiTextarea.value = event.target.result; showToast(currentLang === 'ar' ? 'تم استخراج النص من الملف بنجاح! ✅' : 'Text extracted successfully! ✅', 'success'); };
-            reader.onerror = function() { alert(currentLang === 'ar' ? 'خطأ في قراءة الملف. تأكد إنه ملف نصي (.txt)' : 'Error reading file. Please use a text file (.txt).'); }
-            reader.readAsText(file);
-        }
-    });
-}
 
 function showToast(message, type = 'success') { const container = document.getElementById('toast-container'); if(!container) return; const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.innerText = message; container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3000); }
 window.alert = function(message) { showToast(message, (message.includes('خطأ') || message.toLowerCase().includes('error')) ? 'error' : 'success'); };
@@ -298,7 +330,6 @@ function showScreen(screenId, pushToHistory = true) { document.querySelectorAll(
 window.addEventListener('popstate', (event) => { if (event.state) { currentSubjectKey = event.state.subjectKey; currentSubjectName = event.state.subjectName; currentLectureName = event.state.lectureName; currentQIndex = event.state.qIndex; isExamMode = event.state.isExam; if (event.state.screen === 'subjectScreen' && currentSubjectKey) { document.getElementById('subjectTitle').innerText = currentSubjectName; updateDashboardUI(); renderLectures(); } else if (event.state.screen === 'lectureScreen' && currentLectureName) { document.getElementById('lectureTitle').innerText = `${currentSubjectName} - ${currentLectureName}`; } else if (event.state.screen === 'quizScreen') { loadQuestion(); } showScreen(event.state.screen, false); } else showScreen('homeScreen', false); });
 
 let audioCtx = null; let isSoundEnabled = localStorage.getItem('myUniversityApp_sound') !== 'disabled'; 
-// دالة تحديث زرار الصوت عشان تتجاوب مع اللغة
 function updateSoundBtn() { const btn = document.getElementById('soundToggleBtn'); if(btn) { btn.innerHTML = isSoundEnabled ? (currentLang==='ar'?'🔊 الصوت شغال':'🔊 Sound On') : (currentLang==='ar'?'🔇 الصوت مكتوم':'🔇 Sound Off'); } }
 function toggleSound() { isSoundEnabled = !isSoundEnabled; localStorage.setItem('myUniversityApp_sound', isSoundEnabled ? 'enabled' : 'disabled'); updateSoundBtn(); showToast(isSoundEnabled ? (currentLang==='ar'?'تم تشغيل الصوت 🔊':'Sound On 🔊') : (currentLang==='ar'?'تم كتم الصوت 🔇':'Sound Off 🔇')); }
 
@@ -307,12 +338,12 @@ function playSound(type) { if (!isSoundEnabled) return; try { if (!audioCtx) aud
 const motivationalQuotes = ["وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ", "إِنَّا لَا نُضِيعُ أَجْرَ مَنْ أَحْسَنَ عَمَلًا", "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", "بِقَدْرِ الكَدِّ تُكْتَسَبُ المَعَالِي", "يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ"];
 let lastQuoteIndex = -1; 
 function changeQuote() {
-    const frame = document.getElementById('quoteFrame'), textEl = document.getElementById('quoteText'); if(!frame || !textEl) return; 
-    frame.style.opacity = 0; frame.style.transform = 'translateY(10px)';
+    const textEl = document.getElementById('quoteText'); if(!textEl) return; 
+    textEl.style.opacity = 0; textEl.style.transform = 'translateY(10px)';
     setTimeout(() => {
         let randomIndex; do { randomIndex = Math.floor(Math.random() * motivationalQuotes.length); } while (randomIndex === lastQuoteIndex && motivationalQuotes.length > 1);
         lastQuoteIndex = randomIndex; textEl.innerText = motivationalQuotes[randomIndex];
-        frame.style.opacity = 1; frame.style.transform = 'translateY(0)';
+        textEl.style.opacity = 1; textEl.style.transform = 'translateY(0)';
     }, 800); 
 }
 
@@ -320,6 +351,5 @@ window.onload = function() {
     applyLanguage();
     setupDragAndDrop(); 
     setInterval(changeQuote, 12000);
-    if(!currentUser) changeQuote(); 
     history.replaceState({ screen: 'homeScreen', subjectKey: '', subjectName: '', lectureName: '' }, '', '#homeScreen');
 };

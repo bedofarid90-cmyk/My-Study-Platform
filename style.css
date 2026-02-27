@@ -76,22 +76,22 @@ input[type="text"], input[type="number"], select, textarea { width: 100%; paddin
 input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
 .hidden { display: none !important; }
 
-/* ================= المقولة التحفيزية (اللون الأزرق/البنفسجي المتناسق) ================= */
+/* ================= المقولة التحفيزية بالألوان المتناسقة ================= */
 .quote-frame { background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(192, 132, 252, 0.1)); border: 1px solid rgba(99, 102, 241, 0.2); padding: 40px 30px; border-radius: 25px; margin-bottom: 50px; text-align: center; position: relative; transition: all 0.8s ease; }
-.quote-decor { font-family: 'Aref Ruqaa Ink', serif; font-size: 8rem; position: absolute; top: -30px; right: 20px; color: var(--primary-color); opacity: 0.15; line-height: 1; }
+.quote-decor { font-family: 'Aref Ruqaa Ink', serif !important; font-size: 8rem; position: absolute; top: -30px; right: 20px; color: var(--primary-color); opacity: 0.15; line-height: 1; }
 .quote-text-main { 
-    font-family: 'Aref Ruqaa Ink', serif; 
+    font-family: 'Aref Ruqaa Ink', serif !important; 
     font-size: 2.2rem; 
     line-height: 1.6; 
     font-weight: 700; 
     position: relative; 
     z-index: 2; 
-    color: var(--primary-color); /* لون أساسي متناسق */
-    text-shadow: 0px 2px 10px rgba(99, 102, 241, 0.4), 0px 4px 20px rgba(99, 102, 241, 0.2) !important; /* ظل بنفسجي/أزرق شيك */
+    color: var(--primary-color); /* لون متناسق مع المنصة */
+    text-shadow: 0px 2px 10px rgba(99, 102, 241, 0.3) !important; /* ظل هادي */
 }
 [data-theme="dark"] .quote-text-main { 
-    color: #818cf8; /* لون أفتح شوية عشان الدارك مود */
-    text-shadow: 0px 0px 15px rgba(129, 140, 248, 0.6) !important; 
+    color: #818cf8; /* لون أفتح للدارك مود */
+    text-shadow: 0px 0px 15px rgba(129, 140, 248, 0.4) !important; 
 }
 
 .dashboard { background: var(--card-bg); padding: 30px; border-radius: 20px; margin-bottom: 40px; box-shadow: var(--shadow); border: 1px solid var(--input-border); }
@@ -106,24 +106,22 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:foc
 
 .about-section { margin-top: 60px; padding: 35px; border-radius: 20px; background: linear-gradient(135deg, rgba(52, 211, 153, 0.05), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: var(--shadow); line-height: 1.8; }
 .about-section h3 { color: var(--success-color); margin-top: 0; font-size: 1.4rem;}
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; }
+
+/* تأكيد النافذة المنبثقة للظهور فوق كل شيء */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); z-index: 99999 !important; justify-content: center; align-items: center; }
 .modal-content { background-color: var(--card-bg); width: 90%; max-width: 450px; border-radius: 20px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; border: 1px solid var(--glass-border); }
-#toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 15px; }
+
+#toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 99999; display: flex; flex-direction: column; gap: 15px; }
 .toast { background-color: var(--card-bg); color: var(--text-color); padding: 18px 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-right: 6px solid var(--primary-color); font-weight: 700; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards, fadeOut 0.4s ease-in forwards 3s; direction: rtl; text-align: right; border-left: 1px solid var(--input-border); border-top: 1px solid var(--input-border); border-bottom: 1px solid var(--input-border); }
 .toast.success { border-right-color: var(--success-color); }
 .toast.error { border-right-color: var(--danger-color); }
 .feedback { margin-top: 25px; padding: 25px; border-radius: 15px; display: none; font-weight: 700; line-height: 1.8; font-size: 1.1rem; direction: ltr; text-align: left; }
 .feedback.correct { background-color: rgba(16, 185, 129, 0.1); color: var(--success-color); border: 1px solid rgba(16, 185, 129, 0.3); }
 .feedback.wrong { background-color: rgba(244, 63, 94, 0.1); color: var(--danger-color); border: 1px solid rgba(244, 63, 94, 0.3); }
-.btn-ai { border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: 0.3s; margin-right: 10px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.btn-ai.chatgpt { background-color: #10a37f; }
-.btn-ai.gemini { background: linear-gradient(90deg, #8e44ad, #3498db); }
-.btn-ai:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
 /* دعم الإنجليزي */
 body[dir="ltr"] { font-family: 'Poppins', sans-serif; }
 body[dir="ltr"] .logo, body[dir="ltr"] .btn, body[dir="ltr"] input, body[dir="ltr"] select, body[dir="ltr"] textarea { font-family: 'Poppins', sans-serif; }
-body[dir="ltr"] .quote-text-main, body[dir="ltr"] .quote-decor { font-family: 'Poppins', sans-serif; color: var(--primary-color); text-shadow: none !important; }
 body[dir="ltr"] .form-group { text-align: left; }
 body[dir="ltr"] .settings-group { border-left: none; border-right: 2px solid var(--input-border); padding-left: 0; padding-right: 15px; margin-left: 0; margin-right: 5px; }
 body[dir="ltr"] .toast { direction: ltr; text-align: left; border-right: 1px solid var(--input-border); border-left: 6px solid var(--primary-color); }
