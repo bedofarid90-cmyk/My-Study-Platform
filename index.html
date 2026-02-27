@@ -129,7 +129,8 @@
                 </div>
                 <div class="form-group"><label data-i18n="correctAnswerLabel">الإجابة الصحيحة:</label><select id="qAnswer" style="font-weight: bold;"></select></div>
                 <div class="form-group"><label data-i18n="explanationLabel">الشرح (اختياري):</label><textarea id="qExplanation" rows="2"></textarea></div>
-                <button class="btn btn-success" onclick="saveQuestion()" style="width: 100%;" data-i18n="saveCloudBtn">💾 حفظ السؤال سحابياً</button>
+                
+                <button class="btn btn-success" onclick="saveQuestion()" style="width: 100%;" data-i18n="saveBtnOnly">💾 حفظ السؤال</button>
             </div>
 
             <div id="bulkAddMode" class="hidden">
@@ -196,7 +197,7 @@
         <div class="quiz-container" style="text-align: center;">
             <h2 data-i18n="finalResultTitle">🎯 النتيجة النهائية</h2><h1 id="finalScoreText" style="font-size: 4rem; color: var(--primary-color);">0%</h1>
             <p id="examResultMessage" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 30px; line-height: 1.6;"></p>
-            <button class="btn btn-primary" onclick="history.back()" data-i18n="backToLectureBtn">🔙 رجوع للمحاضرة</button>
+            <button class="btn btn-primary" onclick="openLecture(currentLectureName)" data-i18n="backToLectureBtn">🔙 رجوع للمحاضرة</button>
         </div>
     </div>
 
@@ -211,7 +212,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     </script>
     <script src="script.js"></script>
 </body>

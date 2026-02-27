@@ -15,15 +15,17 @@ const translations = {
         addQsTitle: "إضافة سؤال", singleModeBtn: "إضافة مفرد ✏️", bulkModeBtn: "إضافة بالجملة والـ AI 🚀", qTypeLabel: "النوع:",
         tfOption: "صح وخطأ", mcqOption: "اختياري", mixedOption: "ميكس (النوعين)", qTextLabel: "السؤال:", opt1Label: "الاختيار الأول (1):",
         opt2Label: "الاختيار الثاني (2):", opt3Label: "الاختيار الثالث (3):", opt4Label: "الاختيار الرابع (4):", correctAnswerLabel: "الإجابة الصحيحة:",
-        explanationLabel: "الشرح (اختياري):", saveCloudBtn: "💾 حفظ السؤال سحابياً", aiTitle: "🤖 المولد الذكي (AI Prompt Generator)",
+        explanationLabel: "الشرح (اختياري):", 
+        saveBtnOnly: "💾 حفظ السؤال", // تم تغيير النص هنا
+        aiTitle: "🤖 المولد الذكي (AI Prompt Generator)",
         aiDesc: "حط المادة العلمية (أو ملخص المحاضرة) هنا، حدد طلبك، وهنعملك 'أمر برمجي' تديه للذكاء الاصطناعي عشان يطلعلك الأسئلة بالصيغة المظبوطة!",
         aiPlaceholder: "انسخ النص أو اسحب وأفلت الملف هنا (PDF, Word, TXT)", aiCountLabel: "عدد الأسئلة:", aiTypeLabel: "نوع الأسئلة:", aiGenBtn: "🪄 توليد ونسخ الأمر السري", pasteTitle: "📥 لصق الأسئلة الجاهزة",
         pasteDesc: "بعد ما الذكاء الاصطناعي يكتبلك الأسئلة، انسخها كلها وارميها هنا ودوس حفظ.", saveBulkBtn: "⚡ معالجة وحفظ الأسئلة في المحاضرة",
         endExamBtn: "✖️ إنهاء المذاكرة", timeLabel: "⏱️ الوقت:", finalResultTitle: "🎯 النتيجة النهائية", backToLectureBtn: "🔙 رجوع للمحاضرة",
         confirmMsg: "هل أنت متأكد؟", confirmLogout: "هل أنت متأكد من تسجيل الخروج؟", cancelBtn: "إلغاء", agreeBtn: "موافق ✅", saveBtn: "حفظ 💾",
         js_demo: "سجل دخول لعرض موادك الحقيقية ومزامنتها...", js_loginReq: "سجل دخول بحساب جوجل الأول! 🔒",
-        js_demoReq: "دي نسخة عرض 👀.. سجل دخول عشان تفتحها! 🔒", js_saved: "تم الحفظ سحابياً ☁️", js_deleted: "تم المسح بنجاح 🗑️",
-        js_qReq: "ضيف أسئلة الأول!", js_timeUp: "انتهى وقت الامتحان! ⏰", js_copied: "تم نسخ الأمر بنجاح! 📋"
+        js_demoReq: "دي نسخة عرض 👀.. سجل دخول عشان تفتحها! 🔒", js_saved: "تم الحفظ بنجاح ✅", js_deleted: "تم المسح بنجاح 🗑️",
+        js_qReq: "ضيف أسئلة الأول يا بطل عشان تمتحن!", js_timeUp: "انتهى وقت الامتحان! ⏰", js_copied: "تم نسخ الأمر بنجاح! 📋"
     },
     en: {
         appName: "Zaker", loginBtn: "Login 🚀", loginPrompt: '"Please login to view and sync your subjects..."',
@@ -38,14 +40,16 @@ const translations = {
         addQsTitle: "Add Question", singleModeBtn: "Single Add ✏️", bulkModeBtn: "Bulk & AI 🚀", qTypeLabel: "Type:",
         tfOption: "True / False", mcqOption: "Multiple Choice", mixedOption: "Mixed (Both)", qTextLabel: "Question:", opt1Label: "Option (1):",
         opt2Label: "Option (2):", opt3Label: "Option (3):", opt4Label: "Option (4):", correctAnswerLabel: "Correct Answer:",
-        explanationLabel: "Explanation (Optional):", saveCloudBtn: "💾 Save to Cloud", aiTitle: "🤖 AI Prompt Generator",
+        explanationLabel: "Explanation (Optional):", 
+        saveBtnOnly: "💾 Save Question", 
+        aiTitle: "🤖 AI Prompt Generator",
         aiDesc: "Paste the scientific material here, specify your request, and we'll generate a 'prompt' for the AI to output questions in the exact format needed!",
         aiPlaceholder: "Paste text or Drag & Drop (PDF, Word, TXT) here...", aiCountLabel: "Question Count:", aiTypeLabel: "Question Type:", aiGenBtn: "🪄 Generate & Copy Prompt", pasteTitle: "📥 Paste Ready Questions",
         pasteDesc: "After the AI generates your questions, paste them all here and click save.", saveBulkBtn: "⚡ Process & Save Questions",
         endExamBtn: "✖️ End Study", timeLabel: "⏱️ Time:", finalResultTitle: "🎯 Final Result", backToLectureBtn: "🔙 Back to Lecture",
         confirmMsg: "Are you sure?", confirmLogout: "Are you sure you want to logout?", cancelBtn: "Cancel", agreeBtn: "Confirm ✅", saveBtn: "Save 💾",
         js_demo: "Login to view and sync your real subjects...", js_loginReq: "Login with Google first! 🔒",
-        js_demoReq: "Demo mode 👀.. Login to access! 🔒", js_saved: "Saved to Cloud ☁️", js_deleted: "Deleted successfully 🗑️",
+        js_demoReq: "Demo mode 👀.. Login to access! 🔒", js_saved: "Saved successfully ✅", js_deleted: "Deleted successfully 🗑️",
         js_qReq: "Add questions first!", js_timeUp: "Time is up! ⏰", js_copied: "Prompt copied successfully! 📋"
     }
 };
@@ -94,12 +98,7 @@ let isExamMode = false, examScore = 0, examTimeLeft = 0, examTimerInterval;
 // 3. نظام تسجيل الدخول
 // =========================================
 function loginWithGoogle() { auth.signInWithPopup(provider).catch(err => alert("Error: " + err.message)); }
-
-function logout() {
-    customConfirm(t('confirmLogout'), function() {
-        auth.signOut().then(() => { subjectsMeta = {}; allData = {}; userProgress = {}; location.reload(); });
-    });
-}
+function logout() { customConfirm(t('confirmLogout'), function() { auth.signOut().then(() => { subjectsMeta = {}; allData = {}; userProgress = {}; location.reload(); }); }); }
 
 auth.onAuthStateChanged(user => {
     if (user) {
@@ -109,7 +108,7 @@ auth.onAuthStateChanged(user => {
         document.getElementById('userImg').src = user.photoURL;
         document.getElementById('userName').innerText = user.displayName.split(' ')[0];
         document.getElementById('mainContent').classList.remove('hidden');
-        document.getElementById('quoteText').style.display = 'none'; // إخفاء جملة التسجيل
+        document.getElementById('quoteText').style.display = 'none'; 
         changeQuote();
         loadDataFromCloud();
     } else {
@@ -171,7 +170,7 @@ function updateDashboardUI() { if (!currentSubjectKey) return; initSubjectProgre
 function resetProgress() { customConfirm(t('confirmMsg'), function() { userProgress[currentSubjectKey] = { total: 0, correct: 0, wrong: 0 }; saveDataToCloud(); updateDashboardUI(); }); }
 
 // =========================================
-// 5. إدارة الأسئلة والسحب والإفلات (PDF & Word)
+// 5. إدارة الأسئلة والسحب والإفلات
 // =========================================
 function toggleFormFields() { const type = document.getElementById('qType').value; const mcqFields = document.getElementById('mcqFields'); const qAns = document.getElementById('qAnswer'); qAns.innerHTML = ''; if (type === 'mcq') { mcqFields.classList.remove('hidden'); qAns.innerHTML = `<option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>`; } else { mcqFields.classList.add('hidden'); qAns.innerHTML = `<option value="صح">${currentLang==='ar'?'صح':'True'}</option><option value="غلط">${currentLang==='ar'?'غلط':'False'}</option>`; } }
 function openAddQuestion() { editingQuestionIndex = -1; document.getElementById('qType').value = 'tf'; toggleFormFields(); document.getElementById('qText').value = ''; document.getElementById('qExplanation').value = ''; document.getElementById('opt1').value = ''; document.getElementById('opt2').value = ''; document.getElementById('opt3').value = ''; document.getElementById('opt4').value = ''; toggleAddMode('single'); showScreen('addQuestionScreen'); }
@@ -182,7 +181,9 @@ function saveQuestion() {
     if(!q) return alert("Empty Question!"); let newQ = { type, q, explanation: exp }; let correctAns = "";
     if (type === 'mcq') { const o1 = sanitizeInput(document.getElementById('opt1').value.trim()); const o2 = sanitizeInput(document.getElementById('opt2').value.trim()); const o3 = sanitizeInput(document.getElementById('opt3').value.trim()); const o4 = sanitizeInput(document.getElementById('opt4').value.trim()); newQ.options = [o1, o2]; if(o3) newQ.options.push(o3); if(o4) newQ.options.push(o4); const ansIndex = document.getElementById('qAnswer').value; if (ansIndex === '1') correctAns = o1; else if (ansIndex === '2') correctAns = o2; else if (ansIndex === '3' && o3) correctAns = o3; else if (ansIndex === '4' && o4) correctAns = o4; newQ.a = correctAns; } else { newQ.a = document.getElementById('qAnswer').value; }
     if (editingQuestionIndex > -1) { allData[currentSubjectKey][currentLectureName][editingQuestionIndex] = newQ; } else { allData[currentSubjectKey][currentLectureName].push(newQ); }
-    saveDataToCloud(); showToast(t('js_saved')); history.back();
+    saveDataToCloud(); showToast(t('js_saved')); 
+    // التعديل السحري لمنع الطرد برة الموقع
+    openLecture(currentLectureName);
 }
 
 function generateAIPrompt() {
@@ -205,7 +206,13 @@ function saveBulkQuestions() {
         if(lines.length === 2) { if(a === 'صح' || a === 'غلط' || a === 'True' || a === 'False') { allData[currentSubjectKey][currentLectureName].push({ type: 'tf', q: q, a: (a==='True'?'صح':(a==='False'?'غلط':a)), explanation: '' }); added++; } } 
         else if (lines.length > 2) { const options = lines.slice(1, lines.length - 1).map(opt => sanitizeInput(opt)); allData[currentSubjectKey][currentLectureName].push({ type: 'mcq', q: q, options: options, a: a, explanation: '' }); added++; }
     });
-    if(added > 0) { saveDataToCloud(); showToast(t('js_saved')); document.getElementById('bulkText').value = ''; history.back(); } 
+    if(added > 0) { 
+        saveDataToCloud(); 
+        showToast(t('js_saved')); 
+        document.getElementById('bulkText').value = ''; 
+        // التعديل السحري لمنع الطرد برة الموقع
+        openLecture(currentLectureName); 
+    } 
 }
 
 function openManageQuestions() { renderManageQuestions(); showScreen('manageQuestionsScreen'); }
@@ -217,7 +224,7 @@ function renderManageQuestions() {
     });
 }
 function deleteQuestion(index) { customConfirm(t('confirmMsg'), function() { allData[currentSubjectKey][currentLectureName].splice(index, 1); saveDataToCloud(); renderManageQuestions(); }); }
-function editQuestion(index) { /* Edit functionality */ }
+function editQuestion(index) { /* ميزة التعديل */ }
 
 // =========================================
 // السحب والإفلات لملفات (TXT, PDF, Word)
@@ -225,10 +232,29 @@ function editQuestion(index) { /* Edit functionality */ }
 function setupDragAndDrop() {
     const aiTextarea = document.getElementById('aiSourceText');
     if (!aiTextarea) return;
-    aiTextarea.addEventListener('dragover', (e) => { e.preventDefault(); aiTextarea.style.border = '2px dashed var(--success-color)'; aiTextarea.style.backgroundColor = 'rgba(16, 185, 129, 0.05)'; });
-    aiTextarea.addEventListener('dragleave', (e) => { e.preventDefault(); aiTextarea.style.border = '2px dashed var(--primary-color)'; aiTextarea.style.backgroundColor = 'transparent'; });
+
+    // حل مشكلة المتصفح بيفتح الملف بالغلط
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        aiTextarea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        aiTextarea.addEventListener(eventName, () => {
+            aiTextarea.style.border = '2px dashed var(--success-color)';
+            aiTextarea.style.backgroundColor = 'rgba(16, 185, 129, 0.05)';
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        aiTextarea.addEventListener(eventName, () => {
+            aiTextarea.style.border = '2px dashed var(--primary-color)';
+            aiTextarea.style.backgroundColor = 'transparent';
+        }, false);
+    });
+
     aiTextarea.addEventListener('drop', (e) => {
-        e.preventDefault(); aiTextarea.style.border = '2px dashed var(--primary-color)'; aiTextarea.style.backgroundColor = 'transparent';
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0]; 
             const fileName = file.name.toLowerCase();
@@ -244,7 +270,7 @@ function setupDragAndDrop() {
                 reader.onload = async function() {
                     try {
                         const typedarray = new Uint8Array(this.result);
-                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                        const pdf = await window.pdfjsLib.getDocument(typedarray).promise;
                         let fullText = '';
                         for (let i = 1; i <= pdf.numPages; i++) {
                             const page = await pdf.getPage(i);
@@ -273,20 +299,33 @@ function setupDragAndDrop() {
 }
 
 // =========================================
-// 6. نظام الامتحان والمذاكرة
+// 6. نظام الامتحان والمذاكرة (إصلاح الزراير)
 // =========================================
 function startQuiz(isExam) {
-    const questions = allData[currentSubjectKey][currentLectureName]; if(questions.length === 0) return alert(t('js_qReq'));
+    // إصلاح الخطأ لو البيانات اختفت بعد Refresh
+    if(!currentSubjectKey || !currentLectureName || !allData[currentSubjectKey] || !allData[currentSubjectKey][currentLectureName]) {
+        return showScreen('homeScreen');
+    }
+    const questions = allData[currentSubjectKey][currentLectureName]; 
+    if(!questions || questions.length === 0) return alert(t('js_qReq'));
+    
     isExamMode = isExam; currentQIndex = 0; examScore = 0; clearInterval(examTimerInterval);
     if (isExamMode) { document.getElementById('normalNavControls').style.display = 'none'; document.getElementById('externalAiControls').style.display = 'none'; document.getElementById('examTimerContainer').classList.remove('hidden'); examTimeLeft = questions.length * 60; updateTimerDisplay(); examTimerInterval = setInterval(timerTick, 1000); } 
     else { document.getElementById('normalNavControls').style.display = 'flex'; document.getElementById('externalAiControls').style.display = 'block'; document.getElementById('examTimerContainer').classList.add('hidden'); }
     showScreen('quizScreen'); loadQuestion();
 }
 
-function askExternalAI(platform) { const currentQ = allData[currentSubjectKey][currentLectureName][currentQIndex]; const promptText = currentLang==='ar' ? `اشرحلي إجابة السؤال ده بالتفصيل:\n\nالسؤال:\n${currentQ.q}\n\nالإجابة الصحيحة:\n${currentQ.a}` : `Explain the answer to this question in detail:\n\nQuestion:\n${currentQ.q}\n\nCorrect Answer:\n${currentQ.a}`; navigator.clipboard.writeText(promptText).then(() => { showToast(t('js_copied')); setTimeout(() => { if(platform === 'chatgpt') window.open('https://chatgpt.com/', '_blank'); if(platform === 'gemini') window.open('https://gemini.google.com/app', '_blank'); }, 1200); }); }
+function askExternalAI(platform) { 
+    if(!allData[currentSubjectKey] || !allData[currentSubjectKey][currentLectureName]) return;
+    const currentQ = allData[currentSubjectKey][currentLectureName][currentQIndex]; 
+    if(!currentQ) return;
+    const promptText = currentLang==='ar' ? `اشرحلي إجابة السؤال ده بالتفصيل:\n\nالسؤال:\n${currentQ.q}\n\nالإجابة الصحيحة:\n${currentQ.a}` : `Explain the answer to this question in detail:\n\nQuestion:\n${currentQ.q}\n\nCorrect Answer:\n${currentQ.a}`; 
+    navigator.clipboard.writeText(promptText).then(() => { showToast(t('js_copied')); setTimeout(() => { if(platform === 'chatgpt') window.open('https://chatgpt.com/', '_blank'); if(platform === 'gemini') window.open('https://gemini.google.com/app', '_blank'); }, 1200); }); 
+}
+
 function timerTick() { examTimeLeft--; updateTimerDisplay(); if (examTimeLeft <= 0) { clearInterval(examTimerInterval); alert(t('js_timeUp')); endExam(); } }
 function updateTimerDisplay() { let m = Math.floor(examTimeLeft / 60); let s = examTimeLeft % 60; document.getElementById('examTimerText').innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`; }
-function cancelExam() { clearInterval(examTimerInterval); history.back(); }
+function cancelExam() { clearInterval(examTimerInterval); openLecture(currentLectureName); } // منع الطرد بره الموقع
 
 function loadQuestion() {
     document.getElementById('feedback').style.display = 'none'; document.getElementById('controls').style.display = 'none'; const optionsDiv = document.getElementById('options'); optionsDiv.style.display = 'block'; optionsDiv.innerHTML = ''; const questionsList = allData[currentSubjectKey][currentLectureName];
