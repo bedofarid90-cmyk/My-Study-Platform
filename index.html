@@ -183,27 +183,48 @@
             <div id="examTimerContainer" class="hidden exam-timer"><span data-i18n="timeLabel">⏱️ الوقت:</span> <span id="examTimerText">00:00</span></div>
             
             <div id="normalNavControls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--input-bg); padding: 10px; border-radius: 10px;">
-                <button class="btn btn-secondary" onclick="prevQuestion()">🔙</button><select id="questionSelect" onchange="jumpToQuestion(this.value)"></select><button class="btn btn-secondary" onclick="nextQuestionNav()">⏭️</button>
+                <button class="btn btn-secondary" onclick="prevQuestion()">🔙</button>
+                <select id="questionSelect" onchange="jumpToQuestion(this.value)"></select>
+                <button class="btn btn-secondary" onclick="nextQuestionNav()">⏭️</button>
             </div>
             
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span id="quizProgress" style="font-weight: bold; color: var(--primary-color);"></span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span id="quizProgress" style="font-weight: bold; color: var(--primary-color);"></span>
+            </div>
             
-            <h3 id="questionText">جاري التحميل...</h3><div id="options"></div><div id="feedback" class="feedback"></div>
-            <div id="controls" style="margin-top: 30px; display: none; direction: ltr;"><button class="btn btn-success" id="nextBtn" onclick="nextQuestion()">Next ⏭️</button><button class="btn btn-danger" id="tryAgainBtn" onclick="tryAgain()" style="display: none;">🔄 Try Again</button></div>
+            <div id="externalAiControls" style="text-align: left; margin-bottom: 15px;">
+                <button class="btn-ai chatgpt" onclick="askExternalAI('chatgpt')">🧠 ChatGPT</button>
+                <button class="btn-ai gemini" onclick="askExternalAI('gemini')">✨ Gemini</button>
+            </div>
+
+            <h3 id="questionText">جاري التحميل...</h3>
+            <div id="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div id="controls" style="margin-top: 30px; display: none; direction: ltr;">
+                <button class="btn btn-success" id="nextBtn" onclick="nextQuestion()">Next ⏭️</button>
+                <button class="btn btn-danger" id="tryAgainBtn" onclick="tryAgain()" style="display: none;">🔄 Try Again</button>
+            </div>
         </div>
     </div>
 
     <div id="examResultScreen" class="screen">
         <div class="quiz-container" style="text-align: center;">
-            <h2 data-i18n="finalResultTitle">🎯 النتيجة النهائية</h2><h1 id="finalScoreText" style="font-size: 4rem; color: var(--primary-color);">0%</h1>
+            <h2 data-i18n="finalResultTitle">🎯 النتيجة النهائية</h2>
+            <h1 id="finalScoreText" style="font-size: 4rem; color: var(--primary-color);">0%</h1>
             <p id="examResultMessage" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 30px; line-height: 1.6;"></p>
-            <button class="btn btn-primary" onclick="openLecture(currentLectureName)" data-i18n="backToLectureBtn">🔙 رجوع للمحاضرة</button>
+            <button class="btn btn-primary" onclick="backToLectureFromExam()" data-i18n="backToLectureBtn">🔙 رجوع للمحاضرة</button>
         </div>
     </div>
 
     <div id="toast-container"></div>
     <div id="confirmModal" class="modal-overlay">
-        <div class="modal-content"><h3 id="confirmMessage" style="color: var(--text-color); margin-bottom: 25px;" data-i18n="confirmMsg">هل أنت متأكد؟</h3><div style="display: flex; justify-content: center; gap: 15px;"><button class="btn btn-secondary" onclick="closeConfirm()" data-i18n="cancelBtn">إلغاء</button><button class="btn btn-danger" id="confirmBtnYes" data-i18n="agreeBtn">موافق ✅</button></div></div>
+        <div class="modal-content">
+            <h3 id="confirmMessage" style="color: var(--text-color); margin-bottom: 25px;" data-i18n="confirmMsg">هل أنت متأكد؟</h3>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button class="btn btn-secondary" onclick="closeConfirm()" data-i18n="cancelBtn">إلغاء</button>
+                <button class="btn btn-danger" id="confirmBtnYes" data-i18n="agreeBtn">موافق ✅</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
