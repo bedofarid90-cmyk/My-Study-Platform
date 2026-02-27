@@ -1,7 +1,7 @@
 :root {
     --bg-color: #f8fafc;
     --text-color: #334155;
-    --primary-color: #6366f1; /* لون أزرق/موف احترافي */
+    --primary-color: #6366f1; 
     --primary-hover: #4f46e5;
     --secondary-color: #94a3b8;
     --card-bg: #ffffff;
@@ -15,7 +15,7 @@
 }
 
 [data-theme="dark"] {
-    --bg-color: #0f172a; /* لون كحلي ليلي فخم */
+    --bg-color: #0f172a; 
     --text-color: #f1f5f9;
     --primary-color: #818cf8;
     --primary-hover: #6366f1;
@@ -106,7 +106,6 @@ body {
     box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
 }
 
-/* ================= حساب المستخدم ================= */
 .btn-login {
     padding: 10px 25px !important;
     border-radius: 25px !important;
@@ -245,7 +244,7 @@ body {
 
 .form-group { margin-bottom: 20px; text-align: right; }
 label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 1rem; color: var(--text-color); opacity: 0.9;}
-input[type="text"], select, textarea { 
+input[type="text"], input[type="number"], select, textarea { 
     width: 100%; 
     padding: 15px; 
     border: 2px solid var(--input-border); 
@@ -257,14 +256,14 @@ input[type="text"], select, textarea {
     font-size: 1rem; 
     transition: all 0.3s; 
 }
-input[type="text"]:focus, select:focus, textarea:focus { 
+input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { 
     outline: none; 
     border-color: var(--primary-color); 
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); 
 }
 .hidden { display: none !important; }
 
-/* ================= المقولة التحفيزية (بعد التعديل) ================= */
+/* ================= المقولة التحفيزية المصححة ================= */
 .quote-frame { 
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(192, 132, 252, 0.1));
     border: 1px solid rgba(99, 102, 241, 0.2); 
@@ -276,7 +275,7 @@ input[type="text"]:focus, select:focus, textarea:focus {
     transition: all 0.8s ease; 
 }
 .quote-decor { 
-    font-family: 'Aref Ruqaa Ink', serif; 
+    font-family: 'Cairo', sans-serif; 
     font-size: 8rem; 
     position: absolute; 
     top: -30px; 
@@ -285,14 +284,20 @@ input[type="text"]:focus, select:focus, textarea:focus {
     opacity: 0.1; 
     line-height: 1;
 }
+/* هنا تم إصلاح الخط وإزالة الظل الأحمر */
 .quote-text-main { 
-    font-family: 'Aref Ruqaa Ink', serif; 
-    font-size: 2.2rem; 
+    font-family: 'Cairo', sans-serif; 
+    font-size: 1.8rem; 
     line-height: 1.6; 
     font-weight: 700; 
     position: relative; 
     z-index: 2; 
     color: var(--primary-color); 
+    text-shadow: none !important; 
+}
+[data-theme="dark"] .quote-text-main { 
+    color: #f1f5f9; 
+    text-shadow: none !important; 
 }
 
 /* ================= الإحصائيات ================= */
@@ -317,7 +322,7 @@ input[type="text"]:focus, select:focus, textarea:focus {
     border: 2px dashed rgba(244, 63, 94, 0.3);
 }
 
-/* ================= قسم المزامنة (About) ================= */
+/* ================= قسم المزامنة والنبذة ================= */
 .about-section { 
     margin-top: 60px; 
     padding: 35px; 
@@ -345,5 +350,5 @@ input[type="text"]:focus, select:focus, textarea:focus {
 /* أزرار الذكاء الاصطناعي */
 .btn-ai { border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: 0.3s; margin-right: 10px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .btn-ai.chatgpt { background-color: #10a37f; }
-.btn-ai.gemini { background-background : linear-gradient(90deg, #8e44ad, #3498db); background-color: #8e44ad;}
+.btn-ai.gemini { background: linear-gradient(90deg, #8e44ad, #3498db); }
 .btn-ai:hover { transform: translateY(-2px); filter: brightness(1.1); }

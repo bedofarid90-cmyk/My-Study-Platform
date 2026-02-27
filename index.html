@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ذاكر - منصة المذاكرة السحابية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Oi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="dark">
@@ -17,11 +17,11 @@
                 <button class="icon-btn" onclick="toggleTheme()" title="تبديل الوضع">🌙</button>
             </div>
             
-            <button id="loginBtn" class="btn btn-primary btn-login" onclick="loginWithGoogle()">تسجيل دخول </button>
+            <button id="loginBtn" class="btn btn-primary btn-login" onclick="loginWithGoogle()">تسجيل دخول 🚀</button>
             <div id="userProfile" class="hidden user-profile-badge">
                 <img id="userImg" src="" alt="User">
                 <span id="userName"></span>
-                <button onclick="logout()" class="btn-logout" title="تسجيل خروج"></button>
+                <button onclick="logout()" class="btn-logout" title="تسجيل خروج">🚪</button>
             </div>
         </div>
     </div>
@@ -113,7 +113,7 @@
             
             <div style="display: flex; gap: 10px; margin-bottom: 25px;">
                 <button class="btn btn-secondary" id="btnSingleMode" onclick="toggleAddMode('single')" style="flex: 1; background-color: var(--primary-color);">إضافة مفرد ✏️</button>
-                <button class="btn btn-secondary" id="btnBulkMode" onclick="toggleAddMode('bulk')" style="flex: 1;">إضافة بالجملة 🚀</button>
+                <button class="btn btn-secondary" id="btnBulkMode" onclick="toggleAddMode('bulk')" style="flex: 1;">إضافة بالجملة والـ AI 🚀</button>
             </div>
 
             <div id="singleAddMode">
@@ -131,15 +131,12 @@
             </div>
 
             <div id="bulkAddMode" class="hidden">
-                
-                <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid var(--primary-color); padding: 25px; border-radius: 15px; margin-bottom: 30px; position: relative; overflow: hidden;">
+                <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid var(--primary-color); padding: 25px; border-radius: 15px; margin-bottom: 30px; position: relative;">
                     <h3 style="color: var(--primary-color); margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">🤖 المولد الذكي (AI Prompt Generator)</h3>
                     <p style="font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; opacity: 0.9;">
-                        حط المادة العلمية (أو ملخص المحاضرة) هنا، حدد طلبك، وهنعملك "أمر برمجي" تديه للذكاء الاصطناعي عشان يطلعلك الأسئلة بالصيغة اللي المنصة بتفهمها بالمللي!
+                        حط المادة العلمية (أو ملخص المحاضرة) هنا، حدد طلبك، وهنعملك "أمر برمجي" تديه للذكاء الاصطناعي عشان يطلعلك الأسئلة بالصيغة المظبوطة!
                     </p>
-                    
                     <textarea id="aiSourceText" rows="4" placeholder="انسخ نص المحاضرة أو المادة العلمية هنا..."></textarea>
-                    
                     <div style="display: flex; gap: 15px; margin-top: 15px;">
                         <div class="form-group" style="flex: 1; margin-bottom: 0;">
                             <label>عدد الأسئلة:</label>
@@ -154,8 +151,7 @@
                             </select>
                         </div>
                     </div>
-                    
-                    <button class="btn btn-primary" onclick="generateAIPrompt()" style="width: 100%; margin-top: 20px; font-size: 1.1rem;">🪄 توليد ونسخ الأمر السري</button>
+                    <button class="btn btn-primary" onclick="generateAIPrompt()" style="width: 100%; margin-top: 20px; font-size: 1.1rem; background-color: var(--primary-color);">🪄 توليد ونسخ الأمر السري</button>
                     
                     <div id="aiActionButtons" style="display: none; gap: 10px; margin-top: 15px;">
                         <button class="btn" style="flex: 1; background-color: #10a37f;" onclick="window.open('https://chatgpt.com/', '_blank')">🧠 افتح ChatGPT</button>
