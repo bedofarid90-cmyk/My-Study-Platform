@@ -3,17 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ذاكر - منصة المذاكرة التفاعلية</title>
+    <title>ذاكر - منصة المذاكرة السحابية</title>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Oi&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="dark">
 
     <div class="header">
-        <h1>ذاكر</h1>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
-            <button class="theme-toggle" id="soundToggleBtn" onclick="toggleSound()">🔊 الصوت شغال</button>
-            <button class="theme-toggle" onclick="toggleTheme()">تبديل الوضع 🌙/☀️</button>
+        <h1 class="logo">ذاكر</h1>
+        <div class="header-controls">
+            <div class="settings-group">
+                <button class="icon-btn" id="soundToggleBtn" onclick="toggleSound()" title="تشغيل/كتم الصوت">🔊</button>
+                <button class="icon-btn" onclick="toggleTheme()" title="تبديل الوضع">🌙</button>
+            </div>
+            
+            <button id="loginBtn" class="btn btn-primary btn-login" onclick="loginWithGoogle()">تسجيل دخول </button>
+            <div id="userProfile" class="hidden user-profile-badge">
+                <img id="userImg" src="" alt="User">
+                <span id="userName"></span>
+                <button onclick="logout()" class="btn-logout" title="تسجيل خروج"></button>
+            </div>
         </div>
     </div>
 
@@ -21,29 +30,37 @@
         
         <div class="quote-frame" id="quoteFrame">
             <div class="quote-decor">“</div> 
-            <div class="quote-text-main" id="quoteText">"جاري تحميل الإلهام..."</div>
+            <div class="quote-text-main" id="quoteText">"يرجى تسجيل الدخول لعرض موادك ومزامنتها..."</div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h2 style="margin: 0;">اختار المادة:</h2>
-            <button class="btn btn-success" onclick="addNewSubject()">➕ إضافة مادة جديدة</button>
-        </div>
-        
-        <div class="card-container" id="subjectsContainer"></div>
+        <div id="mainContent" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="margin: 0;">اختار المادة:</h2>
+                <button class="btn btn-success" onclick="addNewSubject()">➕ إضافة مادة جديدة</button>
+            </div>
+            
+            <div class="card-container" id="subjectsContainer"></div>
 
-        <div style="margin-top: 50px; border-top: 2px dashed var(--input-border); padding-top: 30px; text-align: center;">
-            <h2 style="color: var(--primary-color); margin-bottom: 10px;">💾 حماية بياناتك</h2>
-            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px;">احفظ أسئلتك في ملف أمان واسترجعها في أي وقت أو شاركها مع زمايلك.</p>
-            <button class="btn btn-success" onclick="exportData()">⬇️ أخذ نسخة احتياطية</button>
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">⬆️ استرجاع البيانات</button>
-            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+            <div style="margin-top: 50px; border-top: 2px dashed var(--input-border); padding-top: 35px; text-align: center;">
+                <h2 style="color: var(--primary-color); margin-bottom: 10px;">🤝 شارك الدحيحة (بنك الأسئلة)</h2>
+                <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 25px;">
+                    تقدر تنزل أسئلتك في ملف وتبعته لزمايلك في الدفعة يذاكروا منه، أو ترفع ملف أسئلة جاهز بتاع حد من صحابك والمنصة هتبرمجهولك أوتوماتيك وتدمجه مع أسئلتك!
+                </p>
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="exportData()" style="background-color: #3b82f6;">⬇️ تنزيل أسئلتي للمشاركة</button>
+                    <button class="btn btn-success" onclick="document.getElementById('importFile').click()">⬆️ رفع أسئلة زمايلي</button>
+                    <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+                </div>
+            </div>
         </div>
 
         <div class="about-section">
             <h3>💡 ليه تستخدم المنصة دي؟</h3>
             <p>
                 واحدة من أقوى طرق الفهم والحفظ والمراجعة للمواد عالمياً هي طريقة <strong>(Active Recall)</strong>.. يعني إنك تحل وتختبر نفسك بدل ما تقرأ بعينك بس! <br><br>
-                هنا هتقدر تبني بنك أسئلة لكل محاضرة في كل مادة بأسلوبك، وكل ما ترجع تحلها كل فترة بطريقة <strong>(التكرار المتباعد)</strong>، المعلومة هتتحفر في دماغك زي الحجر. ليلة الامتحان مش هتحتاج تتوتر، هتدخل تراجع الأسئلة، وتدخل الفاينال وإنت أسطورة ومقفل المادة! 🚀
+                هنا هتقدر تبني بنك أسئلة لكل محاضرة بأسلوبك، وكل ما ترجع تحلها كل فترة بطريقة <strong>(التكرار المتباعد)</strong>، المعلومة هتتحفر في دماغك زي الحجر. ليلة الامتحان مش هتحتاج تتوتر، هتدخل تراجع الأسئلة، وتدخل الفاينال وإنت أسطورة ومقفل المادة! 🚀
+                <br><br>
+                ☁️ <strong>المزامنة السحابية:</strong> المنصة متصلة بسيرفرات آمنة، بمجرد تسجيل الدخول بحساب جوجل، أسئلتك وموادك هتتحفظ أوتوماتيك وتقدر تفتحها من موبايلك أو لابتوبك في أي وقت.
             </p>
         </div>
     </div>
@@ -94,31 +111,65 @@
         <div class="form-container">
             <h2 style="color: var(--primary-color);">إضافة سؤال <span id="addQSubjectName"></span></h2>
             
-            <div class="form-group">
-                <label>النوع:</label>
-                <select id="qType" onchange="toggleFormFields()">
-                    <option value="tf">صح وخطأ</option>
-                    <option value="mcq">اختياري</option>
-                </select>
+            <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                <button class="btn btn-secondary" id="btnSingleMode" onclick="toggleAddMode('single')" style="flex: 1; background-color: var(--primary-color);">إضافة مفرد ✏️</button>
+                <button class="btn btn-secondary" id="btnBulkMode" onclick="toggleAddMode('bulk')" style="flex: 1;">إضافة بالجملة 🚀</button>
             </div>
-            
-            <div class="form-group"><label>السؤال:</label><textarea id="qText" rows="3"></textarea></div>
-            
-            <div id="mcqFields" class="hidden">
-                <div class="form-group"><label>الاختيار الأول (1):</label><input type="text" id="opt1"></div>
-                <div class="form-group"><label>الاختيار الثاني (2):</label><input type="text" id="opt2"></div>
-                <div class="form-group"><label>الاختيار الثالث (3):</label><input type="text" id="opt3"></div>
-                <div class="form-group"><label>الاختيار الرابع (4):</label><input type="text" id="opt4"></div>
+
+            <div id="singleAddMode">
+                <div class="form-group"><label>النوع:</label><select id="qType" onchange="toggleFormFields()"><option value="tf">صح وخطأ</option><option value="mcq">اختياري</option></select></div>
+                <div class="form-group"><label>السؤال:</label><textarea id="qText" rows="3"></textarea></div>
+                <div id="mcqFields" class="hidden">
+                    <div class="form-group"><label>الاختيار الأول (1):</label><input type="text" id="opt1"></div>
+                    <div class="form-group"><label>الاختيار الثاني (2):</label><input type="text" id="opt2"></div>
+                    <div class="form-group"><label>الاختيار الثالث (3):</label><input type="text" id="opt3"></div>
+                    <div class="form-group"><label>الاختيار الرابع (4):</label><input type="text" id="opt4"></div>
+                </div>
+                <div class="form-group"><label>الإجابة الصحيحة:</label><select id="qAnswer" style="font-weight: bold;"></select></div>
+                <div class="form-group"><label>الشرح (اختياري):</label><textarea id="qExplanation" rows="2"></textarea></div>
+                <button class="btn btn-success" onclick="saveQuestion()" style="width: 100%;">💾 حفظ السؤال سحابياً</button>
             </div>
-            
-            <div class="form-group">
-                <label>الإجابة الصحيحة:</label>
-                <select id="qAnswer" style="font-weight: bold;"></select>
+
+            <div id="bulkAddMode" class="hidden">
+                
+                <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid var(--primary-color); padding: 25px; border-radius: 15px; margin-bottom: 30px; position: relative; overflow: hidden;">
+                    <h3 style="color: var(--primary-color); margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">🤖 المولد الذكي (AI Prompt Generator)</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; opacity: 0.9;">
+                        حط المادة العلمية (أو ملخص المحاضرة) هنا، حدد طلبك، وهنعملك "أمر برمجي" تديه للذكاء الاصطناعي عشان يطلعلك الأسئلة بالصيغة اللي المنصة بتفهمها بالمللي!
+                    </p>
+                    
+                    <textarea id="aiSourceText" rows="4" placeholder="انسخ نص المحاضرة أو المادة العلمية هنا..."></textarea>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 15px;">
+                        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <label>عدد الأسئلة:</label>
+                            <input type="number" id="aiQCount" value="10" min="1" max="50">
+                        </div>
+                        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <label>نوع الأسئلة:</label>
+                            <select id="aiQType">
+                                <option value="mcq">اختياري (MCQ)</option>
+                                <option value="tf">صح وخطأ (T/F)</option>
+                                <option value="mixed">ميكس (النوعين)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="generateAIPrompt()" style="width: 100%; margin-top: 20px; font-size: 1.1rem;">🪄 توليد ونسخ الأمر السري</button>
+                    
+                    <div id="aiActionButtons" style="display: none; gap: 10px; margin-top: 15px;">
+                        <button class="btn" style="flex: 1; background-color: #10a37f;" onclick="window.open('https://chatgpt.com/', '_blank')">🧠 افتح ChatGPT</button>
+                        <button class="btn" style="flex: 1; background-color: #8e44ad;" onclick="window.open('https://gemini.google.com/app', '_blank')">✨ افتح Gemini</button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="text-align: right;">
+                    <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 15px; font-size: 1.2rem;">📥 لصق الأسئلة الجاهزة</h3>
+                    <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px;">بعد ما الذكاء الاصطناعي يكتبلك الأسئلة، انسخها كلها وارميها هنا ودوس حفظ.</p>
+                    <textarea id="bulkText" rows="8" placeholder="الصق الأسئلة المُولدة هنا..."></textarea>
+                </div>
+                <button class="btn btn-success" onclick="saveBulkQuestions()" style="width: 100%; font-size: 1.1rem;">⚡ معالجة وحفظ الأسئلة في المحاضرة</button>
             </div>
-            
-            <div class="form-group"><label>الشرح (يظهر بعد الحل للتوضيح):</label><textarea id="qExplanation" rows="2"></textarea></div>
-            
-            <button class="btn btn-success" onclick="saveQuestion()" style="width: 100%;">💾 حفظ السؤال</button>
         </div>
     </div>
 
@@ -134,8 +185,8 @@
             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span id="quizProgress" style="font-weight: bold; color: var(--primary-color);"></span></div>
             
             <div id="externalAiControls" style="text-align: left; margin-bottom: 15px;">
-                <button class="btn-ai chatgpt" onclick="askExternalAI('chatgpt')" title="اشرح لي بـ ChatGPT">🧠 ChatGPT</button>
-                <button class="btn-ai gemini" onclick="askExternalAI('gemini')" title="اشرح لي بـ Gemini">✨ Gemini</button>
+                <button class="btn-ai chatgpt" onclick="askExternalAI('chatgpt')">🧠 ChatGPT</button>
+                <button class="btn-ai gemini" onclick="askExternalAI('gemini')">✨ Gemini</button>
             </div>
 
             <h3 id="questionText">جاري التحميل...</h3><div id="options"></div><div id="feedback" class="feedback"></div>
@@ -155,18 +206,18 @@
     <div id="confirmModal" class="modal-overlay">
         <div class="modal-content"><h3 id="confirmMessage" style="color: var(--text-color); margin-bottom: 25px;">هل أنت متأكد؟</h3><div style="display: flex; justify-content: center; gap: 15px;"><button class="btn btn-secondary" onclick="closeConfirm()">إلغاء</button><button class="btn btn-danger" id="confirmBtnYes">موافق ✅</button></div></div>
     </div>
-
     <div id="promptModal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="promptMessage" style="color: var(--text-color); margin-bottom: 15px;">...</h3>
-            <input type="text" id="promptInput" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color); font-family: 'Cairo', sans-serif; font-size: 1rem;">
-            <div style="display: flex; justify-content: center; gap: 15px;">
-                <button class="btn btn-secondary" onclick="closePrompt()" style="margin: 0; min-width: 100px;">إلغاء</button>
-                <button class="btn btn-success" id="promptBtnYes" style="margin: 0; min-width: 100px;">حفظ 💾</button>
-            </div>
+            <input type="text" id="promptInput" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color); font-family: 'Cairo', sans-serif;">
+            <div style="display: flex; justify-content: center; gap: 15px;"><button class="btn btn-secondary" onclick="closePrompt()">إلغاء</button><button class="btn btn-success" id="promptBtnYes">حفظ 💾</button></div>
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
