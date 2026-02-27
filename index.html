@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaker - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+    <div class="header">
+        <h1 class="logo" data-i18n="appName">ذاكر</h1>
+        <div class="header-controls">
+            <div class="settings-group">
+                <button class="icon-btn" onclick="toggleLanguage()" title="Language">🌐</button>
+                <button class="icon-btn" onclick="toggleTheme()" title="Theme">🌙</button>
+            </div>
+            <button id="loginBtn" class="btn btn-primary" onclick="loginWithGoogle()" data-i18n="loginBtn">تسجيل دخول 🚀</button>
+            <div id="userProfile" class="hidden user-profile-badge">
+                <img id="userImg" src="">
+                <span id="userName"></span>
+                <button onclick="logout()" class="btn-logout">🚪</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="quote-frame" id="quoteFrame">
+        <div class="quote-decor">“</div> 
+        <div class="quote-text-main" id="quoteText" data-i18n="loginPrompt">"يرجى تسجيل الدخول لعرض موادك ومزامنتها..."</div>
+    </div>
+
+    <div id="mainContent" class="hidden" style="max-width: 1100px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 style="margin: 0;" data-i18n="chooseSubject">اختار المادة:</h2>
+            <button class="btn btn-success" onclick="addNewSubject()" data-i18n="addSubjectBtn">➕ إضافة مادة جديدة</button>
+        </div>
+        
+        <div class="card-container" id="subjectsContainer"></div>
+    </div>
+
+    <div id="toast-container"></div>
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="confirmMessage" style="color: var(--text-color); margin-bottom: 25px;">هل أنت متأكد؟</h3>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button class="btn btn-secondary" onclick="closeConfirm()" data-i18n="cancelBtn">إلغاء</button>
+                <button class="btn btn-danger" id="confirmBtnYes" data-i18n="agreeBtn">موافق ✅</button>
+            </div>
+        </div>
+    </div>
+    <div id="promptModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="promptMessage" style="color: var(--text-color); margin-bottom: 15px;">...</h3>
+            <input type="text" id="promptInput">
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button class="btn btn-secondary" onclick="closePrompt()" data-i18n="cancelBtn">إلغاء</button>
+                <button class="btn btn-success" id="promptBtnYes" data-i18n="saveBtn">حفظ 💾</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginBtn').classList.add('hidden');
+                document.getElementById('userProfile').classList.remove('hidden');
+                document.getElementById('userImg').src = user.photoURL;
+                document.getElementById('userName').innerText = user.displayName.split(' ')[0];
+                document.getElementById('mainContent').classList.remove('hidden');
+                document.getElementById('quoteFrame').style.display = 'none'; 
+                
+                loadSubjects();
+            } else {
+                currentUser = null;
+                document.getElementById('loginBtn').classList.remove('hidden');
+                document.getElementById('userProfile').classList.add('hidden');
+                document.getElementById('mainContent').classList.add('hidden');
+                document.getElementById('quoteFrame').style.display = 'block';
+                document.getElementById('subjectsContainer').innerHTML = '';
+            }
+        });
+
+        async function loadSubjects() {
+            try {
+                const doc = await db.collection('users').doc(currentUser.uid).get();
+                if (doc.exists) {
+                    globalData = doc.data();
+                    if(!globalData.subjectsMeta) globalData.subjectsMeta = {};
+                    if(!globalData.allData) globalData.allData = {};
+                } else {
+                    globalData = { subjectsMeta: {}, allData: {}, userProgress: {} };
+                    await db.collection('users').doc(currentUser.uid).set(globalData);
+                }
+                renderSubjects();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function renderSubjects() {
+            const container = document.getElementById('subjectsContainer');
+            container.innerHTML = '';
+            
+            const meta = globalData.subjectsMeta;
+            if (Object.keys(meta).length === 0) {
+                container.innerHTML = `<p style="text-align:center; width:100%; opacity:0.7;">لا يوجد مواد. أضف مادة جديدة!</p>`;
+                return;
+            }
+            
+            for (let key in meta) {
+                container.innerHTML += `
+                    <div class="card" style="position: relative;">
+                        <div style="position: absolute; top: 10px; ${currentLang === 'ar' ? 'left: 10px;' : 'right: 10px;'} z-index: 10;">
+                            <button onclick="deleteSubject('${key}', event)" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
+                        </div>
+                        <div onclick="goToSubject('${key}', '${meta[key].name}')" style="height: 100%; display:flex; flex-direction:column; justify-content:center;">
+                            <h3>${meta[key].icon} ${meta[key].name}</h3>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        function addNewSubject() {
+            if (!currentUser) return;
+            customPrompt(currentLang === 'ar' ? "اسم المادة الجديدة:" : "New Subject Name:", "", async function(subName) {
+                if (!subName || subName.trim() === "") return;
+                let subKey = 'subj_' + Date.now();
+                
+                globalData.subjectsMeta[subKey] = { name: sanitizeInput(subName.trim()), icon: '📚' };
+                globalData.allData[subKey] = {};
+                
+                await db.collection('users').doc(currentUser.uid).set({
+                    subjectsMeta: globalData.subjectsMeta,
+                    allData: globalData.allData
+                }, { merge: true });
+                
+                renderSubjects();
+                showToast(t('js_saved'));
+            });
+        }
+
+        function deleteSubject(key, event) {
+            event.stopPropagation();
+            customConfirm(t('confirmMsg'), async function() {
+                delete globalData.subjectsMeta[key];
+                delete globalData.allData[key];
+                
+                await db.collection('users').doc(currentUser.uid).set({
+                    subjectsMeta: globalData.subjectsMeta,
+                    allData: globalData.allData
+                }, { merge: true });
+                
+                renderSubjects();
+                showToast(t('js_deleted'));
+            });
+        }
+
+        // هنا السحر: لما تختار مادة، بنحفظ اسمها وبنروح للصفحة التانية
+        function goToSubject(key, name) {
+            localStorage.setItem('currentSubjectKey', key);
+            localStorage.setItem('currentSubjectName', name);
+            window.location.href = 'lecture.html'; // الانتقال للصفحة الجديدة
+        }
+    </script>
+</body>
+</html>
