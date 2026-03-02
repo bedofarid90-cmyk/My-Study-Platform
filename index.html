@@ -18,7 +18,7 @@
             </div>
             <button id="loginBtn" class="btn btn-primary" onclick="loginWithGoogle()" data-i18n="loginBtn">تسجيل دخول 🚀</button>
             <div id="userProfile" class="hidden user-profile-badge">
-                <img id="userImg" src="">
+                <img id="userImg" src="" alt="User">
                 <span id="userName"></span>
                 <button onclick="logout()" class="btn-logout">🚪</button>
             </div>
@@ -31,12 +31,35 @@
     </div>
 
     <div id="mainContent" class="hidden" style="max-width: 1100px; margin: 0 auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
             <h2 style="margin: 0;" data-i18n="chooseSubject">اختار المادة:</h2>
             <button class="btn btn-success" onclick="addNewSubject()" data-i18n="addSubjectBtn">➕ إضافة مادة جديدة</button>
         </div>
         
         <div class="card-container" id="subjectsContainer"></div>
+
+        <div style="margin-top: 50px; border-top: 2px dashed var(--input-border); padding-top: 35px; text-align: center;">
+            <h2 style="color: var(--primary-color); margin-bottom: 10px;" data-i18n="shareTitle">🤝 شارك الدحيحة (بنك الأسئلة)</h2>
+            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 25px;" data-i18n="shareDesc">
+                تقدر تنزل أسئلتك في ملف وتبعته لزمايلك في الدفعة يذاكروا منه، أو ترفع ملف أسئلة جاهز بتاع حد من صحابك والمنصة هتبرمجهولك أوتوماتيك!
+            </p>
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="exportData()" style="background-color: #3b82f6;" data-i18n="exportBtn">⬇️ تنزيل أسئلتي للمشاركة</button>
+                <button class="btn btn-success" onclick="document.getElementById('importFile').click()" data-i18n="importBtn">⬆️ رفع أسئلة زمايلي</button>
+                <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h3 data-i18n="aboutTitle">💡 ليه تستخدم المنصة دي؟</h3>
+            <p data-i18n="aboutText">
+                واحدة من أقوى طرق الفهم والحفظ والمراجعة للمواد عالمياً هي طريقة <strong>(Active Recall)</strong>.. يعني إنك تحل وتختبر نفسك بدل ما تقرأ بعينك بس! <br><br>
+                هنا هتقدر تبني بنك أسئلة لكل محاضرة بأسلوبك، وكل ما ترجع تحلها كل فترة بطريقة <strong>(التكرار المتباعد)</strong>، المعلومة هتتحفر في دماغك زي الحجر. ليلة الامتحان مش هتحتاج تتوتر، هتدخل تراجع الأسئلة، وتدخل الفاينال وإنت أسطورة ومقفل المادة! 🚀
+                <br><br>
+                ☁️ <strong>المزامنة السحابية:</strong> المنصة متصلة بسيرفرات آمنة، بمجرد تسجيل الدخول بحساب جوجل، أسئلتك وموادك هتتحفظ أوتوماتيك وتقدر تفتحها من موبايلك أو لابتوبك في أي وقت.
+            </p>
+        </div>
     </div>
 
     <div id="toast-container"></div>
@@ -74,7 +97,6 @@
                 document.getElementById('userImg').src = user.photoURL;
                 document.getElementById('userName').innerText = user.displayName.split(' ')[0];
                 document.getElementById('mainContent').classList.remove('hidden');
-                document.getElementById('quoteFrame').style.display = 'none'; 
                 
                 loadSubjects();
             } else {
@@ -82,7 +104,6 @@
                 document.getElementById('loginBtn').classList.remove('hidden');
                 document.getElementById('userProfile').classList.add('hidden');
                 document.getElementById('mainContent').classList.add('hidden');
-                document.getElementById('quoteFrame').style.display = 'block';
                 document.getElementById('subjectsContainer').innerHTML = '';
             }
         });
@@ -94,6 +115,7 @@
                     globalData = doc.data();
                     if(!globalData.subjectsMeta) globalData.subjectsMeta = {};
                     if(!globalData.allData) globalData.allData = {};
+                    if(!globalData.userProgress) globalData.userProgress = {};
                 } else {
                     globalData = { subjectsMeta: {}, allData: {}, userProgress: {} };
                     await db.collection('users').doc(currentUser.uid).set(globalData);
@@ -135,12 +157,9 @@
                 
                 globalData.subjectsMeta[subKey] = { name: sanitizeInput(subName.trim()), icon: '📚' };
                 globalData.allData[subKey] = {};
+                globalData.userProgress[subKey] = { total: 0, correct: 0, wrong: 0 };
                 
-                await db.collection('users').doc(currentUser.uid).set({
-                    subjectsMeta: globalData.subjectsMeta,
-                    allData: globalData.allData
-                }, { merge: true });
-                
+                await db.collection('users').doc(currentUser.uid).set(globalData, { merge: true });
                 renderSubjects();
                 showToast(t('js_saved'));
             });
@@ -151,10 +170,12 @@
             customConfirm(t('confirmMsg'), async function() {
                 delete globalData.subjectsMeta[key];
                 delete globalData.allData[key];
+                delete globalData.userProgress[key];
                 
                 await db.collection('users').doc(currentUser.uid).set({
                     subjectsMeta: globalData.subjectsMeta,
-                    allData: globalData.allData
+                    allData: globalData.allData,
+                    userProgress: globalData.userProgress
                 }, { merge: true });
                 
                 renderSubjects();
@@ -162,11 +183,10 @@
             });
         }
 
-        // هنا السحر: لما تختار مادة، بنحفظ اسمها وبنروح للصفحة التانية
         function goToSubject(key, name) {
             localStorage.setItem('currentSubjectKey', key);
             localStorage.setItem('currentSubjectName', name);
-            window.location.href = 'lecture.html'; // الانتقال للصفحة الجديدة
+            window.location.href = 'lecture.html';
         }
     </script>
 </body>
