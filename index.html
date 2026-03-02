@@ -30,7 +30,7 @@
         <div class="quote-text-main" id="quoteText" data-i18n="loginPrompt">"يرجى تسجيل الدخول لعرض موادك ومزامنتها..."</div>
     </div>
 
-    <div id="mainContent" class="hidden" style="max-width: 1100px; margin: 0 auto;">
+    <div id="mainContent" style="max-width: 1100px; margin: 0 auto;">
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
             <h2 style="margin: 0;" data-i18n="chooseSubject">اختار المادة:</h2>
@@ -96,15 +96,22 @@
                 document.getElementById('userProfile').classList.remove('hidden');
                 document.getElementById('userImg').src = user.photoURL;
                 document.getElementById('userName').innerText = user.displayName.split(' ')[0];
-                document.getElementById('mainContent').classList.remove('hidden');
-                
+                document.getElementById('quoteText').style.display = 'none'; 
+                changeQuote(); // تفعيل العبارات
                 loadSubjects();
             } else {
                 currentUser = null;
                 document.getElementById('loginBtn').classList.remove('hidden');
                 document.getElementById('userProfile').classList.add('hidden');
-                document.getElementById('mainContent').classList.add('hidden');
-                document.getElementById('subjectsContainer').innerHTML = '';
+                document.getElementById('quoteText').style.display = 'block';
+                document.getElementById('quoteText').innerText = t('js_demo');
+                
+                // إضافة مواد العرض للزوار
+                globalData.subjectsMeta = { 
+                    'demo1': { name: currentLang === 'ar' ? 'تحليل وتصميم النظم' : 'Systems Analysis', icon: '📊' }, 
+                    'demo2': { name: currentLang === 'ar' ? 'هياكل البيانات' : 'Data Structures', icon: '💻' } 
+                };
+                renderSubjects(true); // true تعني وضع العرض
             }
         });
 
@@ -120,29 +127,33 @@
                     globalData = { subjectsMeta: {}, allData: {}, userProgress: {} };
                     await db.collection('users').doc(currentUser.uid).set(globalData);
                 }
-                renderSubjects();
+                renderSubjects(false);
             } catch (error) {
                 console.error(error);
             }
         }
 
-        function renderSubjects() {
+        function renderSubjects(isDemo = false) {
             const container = document.getElementById('subjectsContainer');
             container.innerHTML = '';
             
             const meta = globalData.subjectsMeta;
             if (Object.keys(meta).length === 0) {
-                container.innerHTML = `<p style="text-align:center; width:100%; opacity:0.7;">لا يوجد مواد. أضف مادة جديدة!</p>`;
+                container.innerHTML = `<p style="text-align:center; width:100%; opacity:0.7;" data-i18n="emptySubject">${t('emptySubject')}</p>`;
                 return;
             }
             
             for (let key in meta) {
+                // لو ديمو، الكليك تطلع رسالة، لو مسجل دخول تنقلك لصفحة المحاضرات
+                let clickAction = isDemo ? `showToast(t('demoAlert'), 'error')` : `goToSubject('${key}', '${meta[key].name}')`;
+                let deleteAction = isDemo ? `showToast(t('demoAlert'), 'error'); event.stopPropagation();` : `deleteSubject('${key}', event)`;
+                
                 container.innerHTML += `
-                    <div class="card" style="position: relative;">
+                    <div class="card" style="position: relative;" onclick="${clickAction}">
                         <div style="position: absolute; top: 10px; ${currentLang === 'ar' ? 'left: 10px;' : 'right: 10px;'} z-index: 10;">
-                            <button onclick="deleteSubject('${key}', event)" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
+                            <button onclick="${deleteAction}" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
                         </div>
-                        <div onclick="goToSubject('${key}', '${meta[key].name}')" style="height: 100%; display:flex; flex-direction:column; justify-content:center;">
+                        <div style="height: 100%; display:flex; flex-direction:column; justify-content:center;">
                             <h3>${meta[key].icon} ${meta[key].name}</h3>
                         </div>
                     </div>`;
@@ -150,8 +161,8 @@
         }
 
         function addNewSubject() {
-            if (!currentUser) return;
-            customPrompt(currentLang === 'ar' ? "اسم المادة الجديدة:" : "New Subject Name:", "", async function(subName) {
+            if (!currentUser) return showToast(t('demoAlert'), 'error');
+            customPrompt(t('newSubjLabel'), "", async function(subName) {
                 if (!subName || subName.trim() === "") return;
                 let subKey = 'subj_' + Date.now();
                 
@@ -160,13 +171,14 @@
                 globalData.userProgress[subKey] = { total: 0, correct: 0, wrong: 0 };
                 
                 await db.collection('users').doc(currentUser.uid).set(globalData, { merge: true });
-                renderSubjects();
+                renderSubjects(false);
                 showToast(t('js_saved'));
             });
         }
 
         function deleteSubject(key, event) {
             event.stopPropagation();
+            if (!currentUser) return;
             customConfirm(t('confirmMsg'), async function() {
                 delete globalData.subjectsMeta[key];
                 delete globalData.allData[key];
@@ -178,7 +190,7 @@
                     userProgress: globalData.userProgress
                 }, { merge: true });
                 
-                renderSubjects();
+                renderSubjects(false);
                 showToast(t('js_deleted'));
             });
         }

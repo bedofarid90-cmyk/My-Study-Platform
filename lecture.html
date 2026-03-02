@@ -22,16 +22,16 @@
                 <button class="icon-btn" onclick="toggleLanguage()" title="Language">🌐</button>
                 <button class="icon-btn" onclick="toggleTheme()" title="Theme">🌙</button>
             </div>
-            <div id="userProfile" class="hidden user-profile-badge">
-                <img id="userImg" src="">
+            <div id="userProfile" class="user-profile-badge">
+                <img id="userImg" src="" alt="User">
                 <span id="userName"></span>
-                <button onclick="logout()" class="btn-logout">🚪</button>
+                <button onclick="logout()" class="btn-logout" title="تسجيل خروج">🚪</button>
             </div>
         </div>
     </div>
 
     <div id="lecturesScreen" class="screen active">
-        <div class="top-controls" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <h2 id="subjectTitle" style="color: var(--primary-color); border-bottom: 3px solid; padding-bottom: 10px; margin: 0;">جاري التحميل...</h2>
             <button class="btn btn-success" onclick="addLecture()" data-i18n="addLectureBtn">➕ إضافة محاضرة جديدة</button>
         </div>
@@ -48,6 +48,7 @@
                 <button class="btn btn-danger" onclick="resetProgress()" data-i18n="resetStatsBtn">🔄 تصفير الإحصائيات</button>
             </div>
         </div>
+
         <div class="card-container" id="lecturesList" style="margin-top: 30px;"></div>
     </div>
 
@@ -59,10 +60,12 @@
             <div class="card" onclick="goToQuiz(false)">
                 <h3 data-i18n="openStudyTitle">📝 المذاكرة المفتوحة</h3>
                 <p data-i18n="openStudyDesc">حل براحتك وشوف الإجابات والشرح فوراً</p>
+                <p id="lectureQCount1" style="font-weight: bold; margin-top: 10px; color: var(--primary-color);"></p>
             </div>
             <div class="card" onclick="goToQuiz(true)" style="border-color: var(--danger-color);">
                 <h3 style="color: var(--danger-color);" data-i18n="examModeTitle">⏱️ امتحان الفاينال</h3>
                 <p data-i18n="examModeDesc">دقيقة لكل سؤال، والنتيجة بتظهر في الآخر</p>
+                <p id="lectureQCount2" style="font-weight: bold; margin-top: 10px; color: var(--danger-color);"></p>
             </div>
             <div class="card" onclick="openAddQuestion()" style="border-color: var(--success-color);">
                 <h3 style="color: var(--success-color);" data-i18n="addQsBtn">➕ إضافة أسئلة</h3>
@@ -81,21 +84,21 @@
             <h2 style="color: var(--primary-color);"><span data-i18n="addQsTitle">إضافة سؤال</span> <span id="addQSubjectName" style="font-size: 1rem; opacity:0.8;"></span></h2>
             
             <div style="display: flex; gap: 10px; margin-bottom: 25px;">
-                <button class="btn btn-secondary" id="btnSingleMode" onclick="toggleAddMode('single')" style="flex: 1; background-color: var(--primary-color);" data-i18n="singleModeBtn">إضافة مفرد ✏️</button>
-                <button class="btn btn-secondary" id="btnBulkMode" onclick="toggleAddMode('bulk')" style="flex: 1;" data-i18n="bulkModeBtn">المولد الذكي AI 🚀</button>
+                <button class="btn btn-secondary" id="btnSingleMode" onclick="toggleAddMode('single')" style="flex: 1; background-color: var(--primary-color);">إضافة مفرد ✏️</button>
+                <button class="btn btn-secondary" id="btnBulkMode" onclick="toggleAddMode('bulk')" style="flex: 1;">المولد الذكي AI 🚀</button>
             </div>
 
             <div id="singleAddMode">
-                <div class="form-group"><label data-i18n="qTypeLabel">النوع:</label><select id="qType" onchange="toggleFormFields()"><option value="tf">صح وخطأ</option><option value="mcq">اختياري</option></select></div>
-                <div class="form-group"><label data-i18n="qTextLabel">السؤال:</label><textarea id="qText" rows="3"></textarea></div>
+                <div class="form-group"><label>النوع:</label><select id="qType" onchange="toggleFormFields()"><option value="tf">صح وخطأ</option><option value="mcq">اختياري</option></select></div>
+                <div class="form-group"><label>السؤال:</label><textarea id="qText" rows="3"></textarea></div>
                 <div id="mcqFields" class="hidden">
                     <div class="form-group"><label>الاختيار الأول (1):</label><input type="text" id="opt1"></div>
                     <div class="form-group"><label>الاختيار الثاني (2):</label><input type="text" id="opt2"></div>
                     <div class="form-group"><label>الاختيار الثالث (3):</label><input type="text" id="opt3"></div>
                     <div class="form-group"><label>الاختيار الرابع (4):</label><input type="text" id="opt4"></div>
                 </div>
-                <div class="form-group"><label data-i18n="correctAnswerLabel">الإجابة الصحيحة:</label><select id="qAnswer" style="font-weight: bold;"></select></div>
-                <div class="form-group"><label data-i18n="explanationLabel">الشرح (اختياري):</label><textarea id="qExplanation" rows="2"></textarea></div>
+                <div class="form-group"><label>الإجابة الصحيحة:</label><select id="qAnswer" style="font-weight: bold;"></select></div>
+                <div class="form-group"><label>الشرح (اختياري):</label><textarea id="qExplanation" rows="2"></textarea></div>
                 <button class="btn btn-success" onclick="saveQuestion()" style="width: 100%;">💾 حفظ السؤال</button>
             </div>
 
@@ -103,15 +106,15 @@
                 <div style="background: rgba(99, 102, 241, 0.05); border: 2px dashed var(--primary-color); padding: 25px; border-radius: 15px; margin-bottom: 30px;" id="dropZone">
                     <h3 style="color: var(--primary-color); margin-top: 0; margin-bottom: 15px;">🤖 المولد الذكي (AI Prompt)</h3>
                     <p style="font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6;">
-                        حط المادة العلمية هنا، أو اختار ملف (PDF, Word, TXT) من جهازك عشان نستخرج نصه.
+                        حط المادة العلمية هنا، أو <strong>اسحب وارمي ملفك هنا</strong>، أو اختار ملف (PDF, Word, TXT) من جهازك عشان نستخرج نصه.
                     </p>
                     
                     <div style="margin-bottom: 15px; text-align: center;">
                         <input type="file" id="fileInput" accept=".txt,.pdf,.docx" style="display: none;" onchange="handleFileUpload(event)">
-                        <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()" style="background-color: #3b82f6; width: 100%;">📂 اختر ملف من الجهاز (PDF, Word, TXT)</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()" style="background-color: #3b82f6; width: 100%; font-size: 1.1rem;">📂 اختر ملف من الجهاز (PDF, Word, TXT)</button>
                     </div>
 
-                    <textarea id="aiSourceText" rows="5" placeholder="أو انسخ نص المحاضرة هنا مباشرة..."></textarea>
+                    <textarea id="aiSourceText" rows="6" placeholder="أو انسخ نص المحاضرة هنا مباشرة..."></textarea>
                     
                     <div style="display: flex; gap: 15px; margin-top: 15px;">
                         <div class="form-group" style="flex: 1; margin-bottom: 0;">
@@ -147,7 +150,7 @@
     <div id="manageQuestionsScreen" class="screen">
         <button class="btn btn-secondary" onclick="showScreen('lectureDashboardScreen')" style="margin-bottom: 20px;">🔙 رجوع</button>
         <div class="quiz-container" style="max-width: 900px;">
-            <h2 style="color: var(--primary-color);" data-i18n="manageQsTitle">إدارة الأسئلة</h2>
+            <h2 style="color: var(--primary-color);">⚙️ إدارة الأسئلة</h2>
             <div id="questionsListContainer" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
     </div>
@@ -157,8 +160,8 @@
         <div class="modal-content">
             <h3 id="confirmMessage" style="color: var(--text-color); margin-bottom: 25px;">هل أنت متأكد؟</h3>
             <div style="display: flex; justify-content: center; gap: 15px;">
-                <button class="btn btn-secondary" onclick="closeConfirm()" data-i18n="cancelBtn">إلغاء</button>
-                <button class="btn btn-danger" id="confirmBtnYes" data-i18n="agreeBtn">موافق ✅</button>
+                <button class="btn btn-secondary" onclick="closeConfirm()">إلغاء</button>
+                <button class="btn btn-danger" id="confirmBtnYes">موافق ✅</button>
             </div>
         </div>
     </div>
@@ -167,8 +170,8 @@
             <h3 id="promptMessage" style="color: var(--text-color); margin-bottom: 15px;">...</h3>
             <input type="text" id="promptInput">
             <div style="display: flex; justify-content: center; gap: 15px;">
-                <button class="btn btn-secondary" onclick="closePrompt()" data-i18n="cancelBtn">إلغاء</button>
-                <button class="btn btn-success" id="promptBtnYes" data-i18n="saveBtn">حفظ 💾</button>
+                <button class="btn btn-secondary" onclick="closePrompt()">إلغاء</button>
+                <button class="btn btn-success" id="promptBtnYes">حفظ 💾</button>
             </div>
         </div>
     </div>
@@ -176,29 +179,32 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <script>
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     </script>
+    
     <script src="app.js"></script>
     
     <script>
-        let currentSubjectKey = localStorage.getItem('currentSubjectKey');
-        let currentSubjectName = localStorage.getItem('currentSubjectName');
+        const currentSubjectKey = localStorage.getItem('currentSubjectKey');
+        const currentSubjectName = localStorage.getItem('currentSubjectName');
         let currentLectureName = '';
         let editingQuestionIndex = -1;
 
+        // طرد المستخدم لو دخل الصفحة دي مباشرة من غير ما يختار مادة
         if (!currentSubjectKey) {
-            window.location.href = 'index.html'; // طرد لو مفيش مادة متحددة
+            window.location.href = 'index.html';
         }
 
         auth.onAuthStateChanged(async user => {
             if (user) {
                 currentUser = user;
-                document.getElementById('userProfile').classList.remove('hidden');
                 document.getElementById('userImg').src = user.photoURL;
                 document.getElementById('userName').innerText = user.displayName.split(' ')[0];
                 document.getElementById('subjectTitle').innerText = currentSubjectName;
 
+                // جلب الداتا من السحابة وتحديث الشاشة
                 try {
                     const doc = await db.collection('users').doc(currentUser.uid).get();
                     if (doc.exists) {
@@ -206,6 +212,7 @@
                         if(!globalData.allData) globalData.allData = {};
                         if(!globalData.userProgress) globalData.userProgress = {};
                         if(!globalData.allData[currentSubjectKey]) globalData.allData[currentSubjectKey] = {};
+                        if(!globalData.userProgress[currentSubjectKey]) globalData.userProgress[currentSubjectKey] = { total: 0, correct: 0, wrong: 0 };
                     }
                     updateDashboardUI();
                     renderLectures();
@@ -213,7 +220,7 @@
                     console.error("Error loading data", e);
                 }
             } else {
-                window.location.href = 'index.html'; // طرد لو مش مسجل دخول
+                window.location.href = 'index.html';
             }
         });
 
@@ -224,14 +231,7 @@
         }
 
         // ================= الإحصائيات والمحاضرات =================
-        function initSubjectProgress() { 
-            if (!globalData.userProgress[currentSubjectKey]) {
-                globalData.userProgress[currentSubjectKey] = { total: 0, correct: 0, wrong: 0 }; 
-            }
-        }
-
         function updateDashboardUI() { 
-            initSubjectProgress(); 
             let prog = globalData.userProgress[currentSubjectKey]; 
             document.getElementById('statTotal').innerText = prog.total; 
             document.getElementById('statCorrect').innerText = prog.correct; 
@@ -261,7 +261,7 @@
             for(let lecName in lectures) { 
                 container.innerHTML += `
                 <div class="card" onclick="openLectureDashboard('${lecName}')" style="position: relative;">
-                    <div style="position: absolute; top: 10px; left: 10px;" onclick="event.stopPropagation();">
+                    <div style="position: absolute; top: 10px; ${currentLang === 'ar' ? 'left: 10px;' : 'right: 10px;'}" onclick="event.stopPropagation();">
                         <button onclick="editLecture('${lecName}')" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">✏️</button>
                         <button onclick="deleteLecture('${lecName}')" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
                     </div>
@@ -309,6 +309,12 @@
             currentLectureName = lecName;
             document.getElementById('lectureTitle').innerText = `${currentSubjectName} - ${lecName}`;
             document.getElementById('addQSubjectName').innerText = `(${lecName})`;
+            
+            // تحديث الأرقام جوه الكروت
+            let count = globalData.allData[currentSubjectKey][lecName].length;
+            document.getElementById('lectureQCount1').innerText = `إجمالي الأسئلة: ${count}`;
+            document.getElementById('lectureQCount2').innerText = `الوقت: ${count} دقيقة`;
+            
             showScreen('lectureDashboardScreen');
         }
 
@@ -367,6 +373,7 @@
                 const o3 = sanitizeInput(document.getElementById('opt3').value.trim()); 
                 const o4 = sanitizeInput(document.getElementById('opt4').value.trim()); 
                 newQ.options = [o1, o2]; if(o3) newQ.options.push(o3); if(o4) newQ.options.push(o4); 
+                
                 const ansIndex = document.getElementById('qAnswer').value; 
                 if (ansIndex === '1') correctAns = o1; else if (ansIndex === '2') correctAns = o2; else if (ansIndex === '3' && o3) correctAns = o3; else if (ansIndex === '4' && o4) correctAns = o4; 
                 newQ.a = correctAns; 
@@ -381,23 +388,23 @@
             }
             
             await db.collection('users').doc(currentUser.uid).set({ allData: globalData.allData }, { merge: true });
-            showToast("تم حفظ السؤال"); 
-            renderLectures(); // تحديث الأرقام برة
-            showScreen('lectureDashboardScreen');
+            showToast("تم حفظ السؤال ✅"); 
+            renderLectures(); 
+            openLectureDashboard(currentLectureName); // رجوع للوحة المحاضرة
         }
 
-        // ================= المولد الذكي وقراءة الملفات (بالزرار والسحب) =================
+        // ================= المولد الذكي ورفع الملفات =================
         async function handleFileUpload(event) {
             const file = event.target.files ? event.target.files[0] : (event.dataTransfer ? event.dataTransfer.files[0] : null);
             if(!file) return;
 
             const fileName = file.name.toLowerCase();
             const aiTextarea = document.getElementById('aiSourceText');
-            showToast('جاري استخراج النص من الملف... ⏳');
+            showToast('جاري استخراج النص... ⏳');
 
             if (fileName.endsWith('.txt')) {
                 const reader = new FileReader();
-                reader.onload = e => { aiTextarea.value = e.target.result; showToast('تم استخراج النص! ✅'); };
+                reader.onload = e => { aiTextarea.value = e.target.result; showToast('تم بنجاح! ✅'); };
                 reader.readAsText(file);
             } 
             else if (fileName.endsWith('.pdf')) {
@@ -413,8 +420,8 @@
                             fullText += textContent.items.map(item => item.str).join(' ') + '\n';
                         }
                         aiTextarea.value = fullText;
-                        showToast('تم استخراج النص من الـ PDF! ✅');
-                    } catch(err) { alert("حدث خطأ أثناء قراءة ملف الـ PDF. جرب ملف آخر."); }
+                        showToast('تم بنجاح! ✅');
+                    } catch(err) { alert("خطأ في قراءة الـ PDF."); }
                 };
                 reader.readAsArrayBuffer(file);
             }
@@ -422,16 +429,16 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     mammoth.extractRawText({arrayBuffer: e.target.result})
-                        .then(result => { aiTextarea.value = result.value; showToast('تم استخراج النص من الوورد! ✅'); })
-                        .catch(err => alert("حدث خطأ أثناء قراءة ملف الوورد."));
+                        .then(result => { aiTextarea.value = result.value; showToast('تم بنجاح! ✅'); })
+                        .catch(err => alert("خطأ في قراءة الوورد."));
                 };
                 reader.readAsArrayBuffer(file);
             } else {
-                alert('صيغة الملف غير مدعومة. الرجاء اختيار TXT أو PDF أو DOCX.');
+                alert('صيغة غير مدعومة! (ارفع TXT, PDF, DOCX)');
             }
         }
 
-        // إعداد السحب والإفلات للمنطقة المحددة
+        // تفعيل السحب والإفلات (Drag & Drop)
         const dropZone = document.getElementById('dropZone');
         if(dropZone) {
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -450,6 +457,7 @@
             const sourceText = document.getElementById('aiSourceText').value.trim(); 
             const qCount = document.getElementById('aiQCount').value; 
             const qType = document.getElementById('aiQType').value;
+            
             if (!sourceText) return alert("الرجاء وضع المادة العلمية أو رفع ملف أولاً!");
             
             let typeInstruction = "";
@@ -496,7 +504,7 @@
                 showToast(`تم حفظ ${added} أسئلة بنجاح 🚀`); 
                 document.getElementById('bulkText').value = ''; 
                 renderLectures();
-                showScreen('lectureDashboardScreen'); 
+                openLectureDashboard(currentLectureName); 
             } else {
                 alert("لم يتم التعرف على أي أسئلة. تأكد أن الصيغة صحيحة بدون أرقام.");
             }
@@ -521,12 +529,12 @@
             questions.forEach((q, index) => {
                 let optsHtml = q.type === 'mcq' ? `<div style="font-size: 0.9rem; color: #7f8c8d; margin-top: 5px;">${q.options.join(' | ')}</div>` : '';
                 container.innerHTML += `
-                <div style="background: var(--input-bg); padding: 15px; border-radius: 10px; border: 1px solid var(--input-border); position: relative; text-align: right;">
-                    <div style="position: absolute; top: 10px; left: 10px; direction: ltr;">
+                <div style="background: var(--input-bg); padding: 15px; border-radius: 10px; border: 1px solid var(--input-border); position: relative; text-align: ${currentLang==='ar'?'right':'left'}; direction: ${currentLang==='ar'?'rtl':'ltr'};">
+                    <div style="position: absolute; top: 10px; ${currentLang==='ar'?'left: 10px;':'right: 10px;'} direction: ltr;">
                         <button onclick="editQuestion(${index})" class="btn" style="padding: 5px 10px; font-size: 14px;">✏️</button>
                         <button onclick="deleteQuestion(${index})" class="btn btn-danger" style="padding: 5px 10px; font-size: 14px;">🗑️</button>
                     </div>
-                    <div style="padding-left: 90px;">
+                    <div style="${currentLang==='ar'?'padding-left: 90px;':'padding-right: 90px;'}">
                         <strong>Q${index + 1}:</strong> ${q.q}
                         <div style="color: var(--success-color); margin-top: 5px;"><strong>الإجابة:</strong> ${q.a}</div>
                         ${optsHtml}
@@ -576,9 +584,10 @@
                 alert("لا توجد أسئلة في هذه المحاضرة. أضف أسئلة أولاً!");
                 return;
             }
+            // بنسيف بيانات الامتحان عشان الصفحة التالتة تقرأها
             localStorage.setItem('currentLectureName', currentLectureName);
             localStorage.setItem('isExamMode', isExamMode);
-            window.location.href = 'quiz.html'; // الانتقال للصفحة الثالثة
+            window.location.href = 'quiz.html'; // التوجيه للصفحة التالتة
         }
     </script>
 </body>
