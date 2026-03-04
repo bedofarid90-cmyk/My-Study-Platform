@@ -3,7 +3,6 @@
 // =========================================
 const translations = {
     ar: {
-        // الرئيسية
         appName: "ذاكر", 
         loginBtn: "تسجيل دخول 🚀", 
         loginPrompt: '"يرجى تسجيل الدخول لعرض موادك ومزامنتها..."',
@@ -16,15 +15,11 @@ const translations = {
         exportPdfBtn: "📄 تنزيل أسئلتي كـ PDF",
         aboutTitle: "💡 ليه تستخدم المنصة دي؟",
         aboutText: "أقوى طرق الفهم والحفظ للمواد عالمياً هي طريقة <strong>(Active Recall)</strong>.. يعني إنك تختبر نفسك بدل ما تقرأ بعينك بس!<br><br>هتقدر تبني بنك أسئلة لكل محاضرة بأسلوبك، وكل ما ترجع تحلها بطريقة <strong>(التكرار المتباعد)</strong>، المعلومة هتتحفر في دماغك. ليلة الامتحان هتدخل تراجع الأسئلة وتدخل الفاينال وإنت مقفل المادة! 🚀<br><br>☁️ <strong>المزامنة السحابية:</strong> بمجرد تسجيل الدخول بحساب جوجل، موادك بتتحفظ أوتوماتيك وتقدر تفتحها من موبايلك أو لابتوبك.",
-        
-        // الأزرار العامة
         confirmMsg: "هل أنت متأكد؟", 
         confirmLogout: "هل أنت متأكد من تسجيل الخروج؟", 
         cancelBtn: "إلغاء", 
         agreeBtn: "موافق ✅", 
         saveBtn: "حفظ 💾",
-        
-        // المحاضرات والأسئلة
         backHomeBtn: "🔙 الرئيسية", 
         backToLecsBtn: "🔙 رجوع للمحاضرات", 
         backBtn: "🔙 رجوع",
@@ -39,6 +34,11 @@ const translations = {
         openStudyDesc: "حل براحتك وشوف الإجابات والشرح فوراً",
         examModeTitle: "⏱️ امتحان الفاينال", 
         examModeDesc: "دقيقة لكل سؤال، والنتيجة بتظهر في الآخر",
+        
+        compExamTitle: "🏆 امتحان شامل للمادة",
+        compExamDesc: "40 سؤال عشوائي من كل المحاضرات (20 اختياري و 20 صح وخطأ).",
+        notEnoughQs: "لا يوجد أسئلة كافية في المادة. يجب إضافة أسئلة للمحاضرات أولاً!",
+        
         addQsBtn: "➕ إضافة أسئلة", 
         addQsDesc: "إضافة أسئلة مفردة أو باستخدام الذكاء الاصطناعي",
         manageQsBtn: "⚙️ إدارة الأسئلة", 
@@ -59,8 +59,6 @@ const translations = {
         correctAnswerLabel: "الإجابة الصحيحة:", 
         explanationLabel: "الشرح (اختياري):", 
         saveBtnOnly: "💾 حفظ السؤال",
-        
-        // الذكاء الاصطناعي
         aiTitle: "🤖 المولد الذكي (AI Prompt)",
         aiDesc: "حط المادة العلمية هنا، أو <strong>اسحب وارمي ملفك هنا</strong>، أو اختار ملف من جهازك عشان نستخرج نصه.",
         chooseFileBtn: "📂 اختر ملف من الجهاز (PDF, Word, TXT)", 
@@ -71,13 +69,9 @@ const translations = {
         pasteTitle: "📥 لصق الأسئلة الجاهزة", 
         pasteDesc: "بعد ما الذكاء الاصطناعي يكتبلك الأسئلة، انسخها كلها وارميها هنا ودوس حفظ.",
         saveBulkBtn: "⚡ معالجة وحفظ الأسئلة في المحاضرة",
-        
-        // الامتحان
         timeLabel: "⏱️ الوقت:", 
         endExamBtn: "✖️ إنهاء المذاكرة", 
         finalResultTitle: "🎯 النتيجة النهائية",
-        
-        // رسائل الجافاسكريبت (التنبيهات)
         demoAlert: "دي نسخة عرض 👀.. سجل دخول عشان تفتحها وتضيف موادك!",
         emptySubject: "لا يوجد مواد مسجلة. أضف مادة جديدة!", 
         emptyLecture: "لا يوجد محاضرات.. أضف محاضرة جديدة للبدء.",
@@ -88,7 +82,7 @@ const translations = {
         newLecLabel: "اسم المحاضرة الجديدة:", 
         newNameLabel: "الاسم الجديد:",
         delLecConfirm: "هل أنت متأكد من مسح المحاضرة بكل أسئلتها؟", 
-        delQConfirm: "هل أنت متأكد من مسح السؤال؟", 
+        delQConfirm: "هل أنت متأكد من مسح هذا العنصر؟", 
         resetConfirm: "متأكد إنك عايز تصفر إحصائيات المادة دي؟",
         emptyQAlert: "اكتب السؤال الأول!", 
         emptyBulkAlert: "مربع الأسئلة فارغ!", 
@@ -101,11 +95,10 @@ const translations = {
         copySuccess: "تم نسخ الأمر السري بنجاح! 📋", 
         copyFail: "فشل النسخ التلقائي، حاول نسخه يدوياً.",
         noQsExtracted: "لم يتم التعرف على أي أسئلة. تأكد أن الصيغة صحيحة بدون أرقام.", 
-        noQsInLec: "لا توجد أسئلة في هذه المحاضرة. أضف أسئلة أولاً!",
+        noQsInLec: "لا توجد أسئلة. أضف أسئلة أولاً!",
         js_timeUp: "انتهى وقت الامتحان! ⏰"
     },
     en: {
-        // Home
         appName: "Zaker", 
         loginBtn: "Login 🚀", 
         loginPrompt: '"Please login to view and sync your subjects..."',
@@ -118,15 +111,11 @@ const translations = {
         exportPdfBtn: "📄 Download as PDF",
         aboutTitle: "💡 Why use this platform?",
         aboutText: "The most powerful study method globally is <strong>Active Recall</strong>.. testing yourself instead of just reading!<br><br>Build a question bank for each lecture. By practicing via <strong>Spaced Repetition</strong>, information will stick like a stone. Before finals, just review your questions and ace the exam! 🚀<br><br>☁️ <strong>Cloud Sync:</strong> Once logged in with Google, your data is auto-saved and accessible from any device.",
-        
-        // General Buttons
         confirmMsg: "Are you sure?", 
         confirmLogout: "Are you sure you want to logout?", 
         cancelBtn: "Cancel", 
         agreeBtn: "Confirm ✅", 
         saveBtn: "Save 💾",
-        
-        // Lectures & Questions
         backHomeBtn: "🔙 Home", 
         backToLecsBtn: "🔙 Back to Lectures", 
         backBtn: "🔙 Back",
@@ -141,6 +130,11 @@ const translations = {
         openStudyDesc: "Solve freely and see answers instantly",
         examModeTitle: "⏱️ Final Exam", 
         examModeDesc: "1 min per question, results at the end",
+        
+        compExamTitle: "🏆 Comprehensive Exam",
+        compExamDesc: "40 random questions from all lectures (20 MCQ, 20 T/F).",
+        notEnoughQs: "Not enough questions in this subject. Add questions first!",
+        
         addQsBtn: "➕ Add Questions", 
         addQsDesc: "Add single questions or use AI",
         manageQsBtn: "⚙️ Manage Questions", 
@@ -161,8 +155,6 @@ const translations = {
         correctAnswerLabel: "Correct Answer:", 
         explanationLabel: "Explanation (Optional):", 
         saveBtnOnly: "💾 Save Question",
-        
-        // AI Generator
         aiTitle: "🤖 AI Generator", 
         aiDesc: "Paste material, <strong>drag and drop a file</strong>, or select a file to extract text.",
         chooseFileBtn: "📂 Select File (PDF, Word, TXT)", 
@@ -173,13 +165,9 @@ const translations = {
         pasteTitle: "📥 Paste Ready Questions", 
         pasteDesc: "After AI generates the questions, paste them all here and click save.",
         saveBulkBtn: "⚡ Process & Save Questions",
-        
-        // Quiz
         timeLabel: "⏱️ Time:", 
         endExamBtn: "✖️ End Study", 
         finalResultTitle: "🎯 Final Result",
-        
-        // JavaScript Alerts
         demoAlert: "Demo Mode 👀.. Login to access and add your subjects!",
         emptySubject: "No subjects registered. Add a new one!", 
         emptyLecture: "No lectures.. Add a new lecture to start.",
@@ -190,7 +178,7 @@ const translations = {
         newLecLabel: "New Lecture Name:", 
         newNameLabel: "New Name:",
         delLecConfirm: "Are you sure you want to delete the lecture and all its questions?", 
-        delQConfirm: "Are you sure you want to delete this question?", 
+        delQConfirm: "Are you sure you want to delete this item?", 
         resetConfirm: "Are you sure you want to reset stats?",
         emptyQAlert: "Write the question first!", 
         emptyBulkAlert: "Questions box is empty!", 
@@ -203,7 +191,7 @@ const translations = {
         copySuccess: "Prompt copied successfully! 📋", 
         copyFail: "Auto-copy failed, please copy manually.",
         noQsExtracted: "No questions recognized. Make sure the format is correct without numbers.", 
-        noQsInLec: "No questions in this lecture. Add questions first!",
+        noQsInLec: "No questions. Add questions first!",
         js_timeUp: "Time is up! ⏰"
     }
 };
@@ -488,10 +476,9 @@ function sanitizeInput(str) {
     return temp.innerHTML; 
 }
 
-// بدء التشغيل عند تحميل الصفحة
+// بدء التشغيل
 window.addEventListener('DOMContentLoaded', () => {
     applyLanguage();
-    
     if(document.getElementById('quoteText')) {
         setInterval(changeQuote, 12000);
     }

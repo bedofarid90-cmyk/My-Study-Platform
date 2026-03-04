@@ -22,7 +22,6 @@
                 <button class="icon-btn" onclick="toggleLanguage()" title="Language">🌐</button>
                 <button class="icon-btn" onclick="toggleTheme()" title="Theme">🌙</button>
             </div>
-            
             <div id="userProfile" class="user-profile-badge">
                 <img id="userImg" src="" alt="User">
                 <span id="userName"></span>
@@ -50,7 +49,16 @@
             </div>
         </div>
 
-        <div class="card-container" id="lecturesList" style="margin-top: 30px;"></div>
+        <div style="background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(99, 102, 241, 0.1)); border: 2px dashed var(--danger-color); padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+            <h2 style="color: var(--danger-color); margin-top: 0; margin-bottom: 10px;" data-i18n="compExamTitle">🏆 امتحان شامل للمادة</h2>
+            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px;" data-i18n="compExamDesc">
+                40 سؤال عشوائي من كل المحاضرات (20 اختياري و 20 صح وخطأ).
+            </p>
+            <button class="btn btn-danger" onclick="startComprehensiveExam()" style="font-size: 1.2rem; padding: 15px 40px;">🚀 ابدأ الامتحان الشامل دلوقتي</button>
+        </div>
+
+        <div class="card-container" id="lecturesList" style="margin-bottom: 50px;"></div>
+
     </div>
 
     <div id="lectureDashboardScreen" class="screen">
@@ -135,8 +143,8 @@
                     </p>
                     
                     <div style="margin-bottom: 15px; text-align: center;">
-                        <input type="file" id="fileInput" accept=".txt,.pdf,.docx" style="display: none;" onchange="handleFileUpload(event)">
-                        <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()" style="background-color: #3b82f6; width: 100%; font-size: 1.1rem;" data-i18n="chooseFileBtn">📂 اختر ملف من الجهاز (PDF, Word, TXT)</button>
+                        <input type="file" id="aiFileInput" accept=".txt,.pdf,.docx" style="display: none;" onchange="handleFileUpload(event)">
+                        <button class="btn btn-secondary" onclick="document.getElementById('aiFileInput').click()" style="background-color: #3b82f6; width: 100%; font-size: 1.1rem;" data-i18n="chooseFileBtn">📂 اختر ملف من الجهاز (PDF, Word, TXT)</button>
                     </div>
                     
                     <textarea id="aiSourceText" rows="6" data-i18n="aiPlaceholder" placeholder="أو انسخ نص المحاضرة هنا مباشرة..."></textarea>
@@ -208,6 +216,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <script>
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     </script>
@@ -238,6 +247,7 @@
                         
                         if(!globalData.allData) globalData.allData = {};
                         if(!globalData.userProgress) globalData.userProgress = {};
+                        
                         if(!globalData.allData[currentSubjectKey]) globalData.allData[currentSubjectKey] = {};
                         if(!globalData.userProgress[currentSubjectKey]) {
                             globalData.userProgress[currentSubjectKey] = { total: 0, correct: 0, wrong: 0 };
@@ -259,6 +269,7 @@
             window.scrollTo(0, 0);
         }
 
+        // ================= الإحصائيات =================
         function updateDashboardUI() { 
             let prog = globalData.userProgress[currentSubjectKey]; 
             document.getElementById('statTotal').innerText = prog.total; 
@@ -276,6 +287,7 @@
             }); 
         }
 
+        // ================= المحاضرات والامتحان الشامل =================
         function renderLectures() {
             const container = document.getElementById('lecturesList'); 
             container.innerHTML = ''; 
@@ -356,6 +368,27 @@
             showScreen('lectureDashboardScreen');
         }
 
+        // دالة بدء الامتحان الشامل 
+        function startComprehensiveExam() {
+            let totalQsCount = 0;
+            const lectures = globalData.allData[currentSubjectKey];
+            
+            for (let lec in lectures) {
+                totalQsCount += lectures[lec].length;
+            }
+            
+            if (totalQsCount === 0) {
+                alert(t('notEnoughQs'));
+                return;
+            }
+            
+            // تعيين إشارات التوجيه للمتصفح
+            localStorage.setItem('isComprehensiveMode', 'true');
+            localStorage.setItem('isExamMode', 'true'); // الفاينال الشامل دايما بيكون فاينال بوقت
+            window.location.href = 'quiz.html';
+        }
+
+        // ================= إضافة الأسئلة =================
         function toggleAddMode(mode) { 
             if(mode === 'single') { 
                 document.getElementById('singleAddMode').classList.remove('hidden'); 
@@ -680,6 +713,7 @@
                 return; 
             }
             
+            localStorage.setItem('isComprehensiveMode', 'false'); // تصفير الشامل
             localStorage.setItem('currentLectureName', currentLectureName); 
             localStorage.setItem('isExamMode', isExamMode); 
             window.location.href = 'quiz.html'; 
