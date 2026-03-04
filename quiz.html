@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zaker - Quiz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="dark">
 
     <div class="header">
         <div style="display: flex; align-items: center; gap: 15px;">
-            <button class="btn btn-secondary" onclick="window.location.href='lecture.html'" style="margin: 0; padding: 8px 15px;">🔙 رجوع للمحاضرة</button>
+            <button class="btn btn-secondary" onclick="window.location.href='lecture.html'" style="margin: 0; padding: 8px 15px;" data-i18n="backToLecsBtn">🔙 رجوع للمحاضرة</button>
             <h1 class="logo" data-i18n="appName" style="font-size: 2rem;">ذاكر</h1>
         </div>
+        
         <div class="header-controls">
             <div class="settings-group">
                 <button class="icon-btn" onclick="toggleLanguage()" title="Language">🌐</button>
@@ -34,6 +35,7 @@
         </div>
         
         <div class="quiz-container">
+            
             <div id="examTimerContainer" class="hidden exam-timer">
                 <span data-i18n="timeLabel">⏱️ الوقت:</span> <span id="examTimerText">00:00</span>
             </div>
@@ -53,7 +55,8 @@
                 <button class="btn-ai gemini" onclick="askExternalAI('gemini')">✨ Gemini</button>
             </div>
 
-            <h3 id="questionText">جاري التحميل...</h3>
+            <h3 id="questionText" direction="ltr">جاري التحميل...</h3>
+            
             <div id="options"></div>
             
             <div id="feedback" class="feedback"></div>
@@ -62,6 +65,7 @@
                 <button class="btn btn-success" id="nextBtn" onclick="nextQuestion()">Next ⏭️</button>
                 <button class="btn btn-danger" id="tryAgainBtn" onclick="tryAgain()" style="display: none;">🔄 Try Again</button>
             </div>
+            
         </div>
     </div>
 
@@ -70,12 +74,12 @@
             <h2 data-i18n="finalResultTitle">🎯 النتيجة النهائية</h2>
             <h1 id="finalScoreText" style="font-size: 4rem; color: var(--primary-color);">0%</h1>
             <p id="examResultMessage" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 30px; line-height: 1.6;"></p>
-            <button class="btn btn-primary" onclick="window.location.href='lecture.html'" data-i18n="backToLectureBtn">🔙 رجوع للمحاضرة</button>
+            <button class="btn btn-primary" onclick="window.location.href='lecture.html'" data-i18n="backToLecsBtn">🔙 رجوع للمحاضرة</button>
         </div>
     </div>
 
     <div id="toast-container"></div>
-
+    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -84,207 +88,207 @@
     <script src="app.js"></script>
     
     <script>
-        // 1. جلب البيانات الأساسية من الذاكرة المحلية
+        // تعريف المتغيرات بشكل منفصل وواضح
         const currentSubjectKey = localStorage.getItem('currentSubjectKey');
         const currentSubjectName = localStorage.getItem('currentSubjectName');
         const currentLectureName = localStorage.getItem('currentLectureName');
         const isExamMode = localStorage.getItem('isExamMode') === 'true';
 
-        // متغيرات الامتحان
-        let currentQIndex = 0;
-        let examScore = 0;
-        let examTimeLeft = 0;
-        let examTimerInterval;
+        let currentQIndex = 0; 
+        let examScore = 0; 
+        let examTimeLeft = 0; 
+        let examTimerInterval; 
         let questionsList = [];
         
-        // إعدادات الصوت
-        let audioCtx = null;
+        let audioCtx = null; 
         let isSoundEnabled = localStorage.getItem('zaker_sound') !== 'disabled';
 
-        // لو داخل تهريب من غير ما تختار مادة، ارجع للرئيسية
+        // التحقق من المسار
         if (!currentSubjectKey || !currentLectureName) {
             window.location.href = 'index.html';
         }
 
-        // 2. التأكد من تسجيل الدخول وسحب الأسئلة من السحابة
+        // تسجيل الدخول وجلب البيانات
         auth.onAuthStateChanged(async user => {
             if (user) {
-                currentUser = user;
+                currentUser = user; 
+                
                 document.getElementById('userProfile').classList.remove('hidden');
-                document.getElementById('userImg').src = user.photoURL;
+                document.getElementById('userImg').src = user.photoURL; 
                 document.getElementById('userName').innerText = user.displayName.split(' ')[0];
-
+                
                 try {
                     const doc = await db.collection('users').doc(currentUser.uid).get();
                     if (doc.exists) {
                         globalData = doc.data();
                         
-                        // تجهيز الإحصائيات لو مش موجودة
-                        if (!globalData.userProgress) globalData.userProgress = {};
-                        if (!globalData.userProgress[currentSubjectKey]) {
-                            globalData.userProgress[currentSubjectKey] = { total: 0, correct: 0, wrong: 0 };
+                        if (!globalData.userProgress) {
+                            globalData.userProgress = {};
                         }
                         
-                        // استخراج الأسئلة
+                        if (!globalData.userProgress[currentSubjectKey]) {
+                            globalData.userProgress[currentSubjectKey] = { 
+                                total: 0, 
+                                correct: 0, 
+                                wrong: 0 
+                            };
+                        }
+                        
                         if (globalData.allData && globalData.allData[currentSubjectKey] && globalData.allData[currentSubjectKey][currentLectureName]) {
-                            questionsList = globalData.allData[currentSubjectKey][currentLectureName];
+                            questionsList = globalData.allData[currentSubjectKey][currentLectureName]; 
                             startQuiz();
-                        } else {
-                            alert("لا توجد أسئلة في هذه المحاضرة.");
-                            window.location.href = 'lecture.html';
+                        } else { 
+                            alert(t('noQsInLec')); 
+                            window.location.href = 'lecture.html'; 
                         }
                     }
-                } catch (e) {
-                    console.error("خطأ في جلب بيانات الامتحان:", e);
+                } catch (e) { 
+                    console.error(e); 
                 }
-            } else {
-                window.location.href = 'index.html';
+            } else { 
+                window.location.href = 'index.html'; 
             }
         });
 
-        // 3. دوال تشغيل الامتحان
+        // بدء الاختبار
         function startQuiz() {
-            currentQIndex = 0;
-            examScore = 0;
-            clearInterval(examTimerInterval);
-            
+            currentQIndex = 0; 
+            examScore = 0; 
+            clearInterval(examTimerInterval); 
             updateSoundBtnUI();
-
+            
             if (isExamMode) {
-                // وضع الامتحان: إخفاء أدوات الغش (الذكاء الاصطناعي والتنقل الحر) وتشغيل التايمر
-                document.getElementById('normalNavControls').style.display = 'none';
+                document.getElementById('normalNavControls').style.display = 'none'; 
                 document.getElementById('externalAiControls').style.display = 'none';
                 document.getElementById('examTimerContainer').classList.remove('hidden');
                 
-                // الوقت: دقيقة لكل سؤال
-                examTimeLeft = questionsList.length * 60;
-                updateTimerDisplay();
+                examTimeLeft = questionsList.length * 60; 
+                updateTimerDisplay(); 
+                
                 examTimerInterval = setInterval(timerTick, 1000);
             } else {
-                // وضع المذاكرة المفتوحة: إظهار كل الأدوات
-                document.getElementById('normalNavControls').style.display = 'flex';
+                document.getElementById('normalNavControls').style.display = 'flex'; 
                 document.getElementById('externalAiControls').style.display = 'block';
                 document.getElementById('examTimerContainer').classList.add('hidden');
             }
-
+            
             loadQuestion();
         }
 
+        // تحميل السؤال
         function loadQuestion() {
-            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none'; 
             document.getElementById('controls').style.display = 'none';
             
-            const optionsDiv = document.getElementById('options');
-            optionsDiv.style.display = 'block';
+            const optionsDiv = document.getElementById('options'); 
+            optionsDiv.style.display = 'block'; 
             optionsDiv.innerHTML = '';
 
             if (currentQIndex < questionsList.length) {
                 
-                // تحديث القائمة المنسدلة للأسئلة
                 if (!isExamMode && document.getElementById('questionSelect')) {
-                    const qSelect = document.getElementById('questionSelect');
+                    const qSelect = document.getElementById('questionSelect'); 
                     qSelect.innerHTML = '';
+                    
                     questionsList.forEach((q, i) => {
-                        let opt = document.createElement('option');
-                        opt.value = i;
+                        let opt = document.createElement('option'); 
+                        opt.value = i; 
                         opt.text = (currentLang === 'ar' ? `سؤال ${i + 1}` : `Q ${i + 1}`);
-                        if (i === currentQIndex) opt.selected = true;
+                        
+                        if (i === currentQIndex) {
+                            opt.selected = true; 
+                        }
+                        
                         qSelect.appendChild(opt);
                     });
                 }
-
+                
                 document.getElementById('quizProgress').innerText = (currentLang === 'ar' ? `السؤال ${currentQIndex + 1} من ${questionsList.length}` : `Question ${currentQIndex + 1} of ${questionsList.length}`);
                 
-                const currentQ = questionsList[currentQIndex];
+                const currentQ = questionsList[currentQIndex]; 
                 document.getElementById('questionText').innerText = currentQ.q;
 
-                // رسم الاختيارات
                 if (currentQ.type === "tf") {
                     optionsDiv.innerHTML += `<button class="btn btn-option" onclick="checkAnswer('صح')">${currentLang==='ar'?'صح':'True'}</button>`;
                     optionsDiv.innerHTML += `<button class="btn btn-option" onclick="checkAnswer('غلط')">${currentLang==='ar'?'غلط':'False'}</button>`;
                 } else if (currentQ.type === "mcq") {
-                    currentQ.options.forEach(opt => {
-                        let safeOpt = opt.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                        optionsDiv.innerHTML += `<button class="btn btn-option" onclick="checkAnswer('${safeOpt}')">${opt}</button>`;
+                    currentQ.options.forEach(opt => { 
+                        let safeOpt = opt.replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
+                        optionsDiv.innerHTML += `<button class="btn btn-option" onclick="checkAnswer('${safeOpt}')">${opt}</button>`; 
                     });
                 }
             } else {
-                // عند إنهاء جميع الأسئلة
-                if (isExamMode) {
-                    endExam();
+                if (isExamMode) { 
+                    endExam(); 
                 } else {
                     document.getElementById('quizProgress').innerText = currentLang === 'ar' ? "تم الانتهاء" : "Finished";
-                    document.getElementById('questionText').innerText = "🎉 لقد أتممت جميع أسئلة المحاضرة بنجاح!";
-                    optionsDiv.style.display = 'none';
-                    document.getElementById('normalNavControls').style.display = 'none';
+                    document.getElementById('questionText').innerText = currentLang === 'ar' ? "🎉 لقد أتممت جميع أسئلة المحاضرة بنجاح!" : "🎉 You have successfully completed all questions!";
+                    
+                    optionsDiv.style.display = 'none'; 
+                    document.getElementById('normalNavControls').style.display = 'none'; 
                     document.getElementById('externalAiControls').style.display = 'none';
                 }
             }
         }
 
-        // 4. دالة التحقق من الإجابة والمزامنة
+        // فحص الإجابة
         async function checkAnswer(userAnswer) {
-            const currentQ = questionsList[currentQIndex];
-            
-            // إضافة السؤال للإحصائيات العامة
+            const currentQ = questionsList[currentQIndex]; 
             globalData.userProgress[currentSubjectKey].total++;
-
+            
             if (isExamMode) {
-                // في وضع الامتحان: لا نظهر الإجابة، نحسب النتيجة فقط وننتقل
-                if (userAnswer === currentQ.a) {
-                    examScore++;
-                    globalData.userProgress[currentSubjectKey].correct++;
-                    playQuizSound('correct');
-                } else {
-                    globalData.userProgress[currentSubjectKey].wrong++;
-                    playQuizSound('wrong');
+                if (userAnswer === currentQ.a) { 
+                    examScore++; 
+                    globalData.userProgress[currentSubjectKey].correct++; 
+                    playQuizSound('correct'); 
+                } else { 
+                    globalData.userProgress[currentSubjectKey].wrong++; 
+                    playQuizSound('wrong'); 
                 }
                 
-                // حفظ السحابة في الخلفية
                 db.collection('users').doc(currentUser.uid).set({ userProgress: globalData.userProgress }, { merge: true });
                 
-                currentQIndex++;
-                loadQuestion();
+                currentQIndex++; 
+                loadQuestion(); 
                 return;
             }
-
-            // في وضع المذاكرة المفتوحة: نظهر النتيجة والشرح
-            const feedbackDiv = document.getElementById('feedback');
+            
+            const feedbackDiv = document.getElementById('feedback'); 
             const controlsDiv = document.getElementById('controls');
             
-            document.getElementById('options').style.display = 'none';
-            feedbackDiv.style.display = 'block';
-            controlsDiv.style.display = 'flex';
+            document.getElementById('options').style.display = 'none'; 
+            feedbackDiv.style.display = 'block'; 
+            controlsDiv.style.display = 'flex'; 
             controlsDiv.style.gap = '10px';
 
             if (userAnswer === currentQ.a) {
-                globalData.userProgress[currentSubjectKey].correct++;
-                playQuizSound('correct');
+                globalData.userProgress[currentSubjectKey].correct++; 
+                playQuizSound('correct'); 
                 feedbackDiv.className = 'feedback correct';
                 feedbackDiv.innerHTML = `✅ <strong>${currentLang==='ar'?'إجابة صحيحة!':'Correct!'}</strong> <br><br> ${currentQ.explanation || ''}`;
-                document.getElementById('tryAgainBtn').style.display = 'none';
+                
+                document.getElementById('tryAgainBtn').style.display = 'none'; 
                 document.getElementById('nextBtn').style.display = 'inline-block';
             } else {
-                globalData.userProgress[currentSubjectKey].wrong++;
-                playQuizSound('wrong');
+                globalData.userProgress[currentSubjectKey].wrong++; 
+                playQuizSound('wrong'); 
                 feedbackDiv.className = 'feedback wrong';
                 feedbackDiv.innerHTML = `❌ <strong>${currentLang==='ar'?'إجابة خاطئة!':'Wrong!'}</strong> <br><br> <strong>${currentLang==='ar'?'الإجابة الصحيحة هي:':'Correct Answer:'}</strong> ${currentQ.a} <br><br> ${currentQ.explanation || ''}`;
-                document.getElementById('tryAgainBtn').style.display = 'inline-block';
+                
+                document.getElementById('tryAgainBtn').style.display = 'inline-block'; 
                 document.getElementById('nextBtn').style.display = 'none';
             }
-
-            // حفظ السحابة
+            
             db.collection('users').doc(currentUser.uid).set({ userProgress: globalData.userProgress }, { merge: true });
         }
 
-        // 5. دوال التايمر والنهايات
+        // إنهاء الامتحان
         function endExam() {
-            clearInterval(examTimerInterval);
-            const totalQs = questionsList.length;
+            clearInterval(examTimerInterval); 
+            const totalQs = questionsList.length; 
             const percent = Math.round((examScore / totalQs) * 100);
             
             if (percent === 100) {
-                // إطلاق الاحتفالات لو قفل الامتحان
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             }
             
@@ -292,119 +296,161 @@
             
             let message = "";
             if(currentLang === 'ar') {
-                if (percent >= 90) message = "أسطورة! أداؤك ممتاز جداً 🚀";
-                else if (percent >= 70) message = "جيد جداً، لكن يمكنك التحسن أكثر 💪";
-                else if (percent >= 50) message = "نجاح بصعوبة.. تحتاج للمزيد من المراجعة 📚";
-                else message = "للأسف النتيجة ضعيفة.. لا تيأس وحاول مرة أخرى 🔁";
+                if (percent >= 90) {
+                    message = "أسطورة! أداؤك ممتاز جداً 🚀"; 
+                } else if (percent >= 70) {
+                    message = "جيد جداً، لكن يمكنك التحسن أكثر 💪"; 
+                } else if (percent >= 50) {
+                    message = "نجاح بصعوبة.. تحتاج للمزيد من المراجعة 📚"; 
+                } else {
+                    message = "للأسف النتيجة ضعيفة.. لا تيأس وحاول مرة أخرى 🔁";
+                }
             } else {
-                if (percent >= 90) message = "Legendary! Excellent performance 🚀";
-                else if (percent >= 70) message = "Very Good, but you can improve 💪";
-                else if (percent >= 50) message = "Barely passed.. Needs more review 📚";
-                else message = "Weak result.. Don't give up and try again 🔁";
+                if (percent >= 90) {
+                    message = "Legendary! Excellent performance 🚀"; 
+                } else if (percent >= 70) {
+                    message = "Very Good, but you can improve 💪"; 
+                } else if (percent >= 50) {
+                    message = "Barely passed.. Needs more review 📚"; 
+                } else {
+                    message = "Weak result.. Don't give up and try again 🔁";
+                }
             }
             
             document.getElementById('examResultMessage').innerText = message;
-            
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
             document.getElementById('examResultScreen').classList.add('active');
         }
 
-        function timerTick() {
-            examTimeLeft--;
-            updateTimerDisplay();
-            if (examTimeLeft <= 0) {
-                clearInterval(examTimerInterval);
-                alert(t('js_timeUp'));
-                endExam();
-            }
+        // عداد الوقت
+        function timerTick() { 
+            examTimeLeft--; 
+            updateTimerDisplay(); 
+            if (examTimeLeft <= 0) { 
+                clearInterval(examTimerInterval); 
+                alert(t('js_timeUp')); 
+                endExam(); 
+            } 
         }
 
-        function updateTimerDisplay() {
-            let m = Math.floor(examTimeLeft / 60);
-            let s = examTimeLeft % 60;
-            document.getElementById('examTimerText').innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+        function updateTimerDisplay() { 
+            let m = Math.floor(examTimeLeft / 60); 
+            let s = examTimeLeft % 60; 
+            document.getElementById('examTimerText').innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`; 
         }
 
-        function cancelExam() {
-            clearInterval(examTimerInterval);
-            window.location.href = 'lecture.html'; // خروج آمن بدون طرد
+        function cancelExam() { 
+            clearInterval(examTimerInterval); 
+            window.location.href = 'lecture.html'; 
         }
 
-        // دوال التنقل
-        function nextQuestion() { currentQIndex++; loadQuestion(); }
-        function prevQuestion() { if (currentQIndex > 0) { currentQIndex--; loadQuestion(); } }
-        function nextQuestionNav() { if (currentQIndex < questionsList.length - 1) { currentQIndex++; loadQuestion(); } }
-        function jumpToQuestion(index) { currentQIndex = parseInt(index); loadQuestion(); }
+        // التنقل بين الأسئلة
+        function nextQuestion() { 
+            currentQIndex++; 
+            loadQuestion(); 
+        }
+        
+        function prevQuestion() { 
+            if (currentQIndex > 0) { 
+                currentQIndex--; 
+                loadQuestion(); 
+            } 
+        }
+        
+        function nextQuestionNav() { 
+            if (currentQIndex < questionsList.length - 1) { 
+                currentQIndex++; 
+                loadQuestion(); 
+            } 
+        }
+        
+        function jumpToQuestion(index) { 
+            currentQIndex = parseInt(index); 
+            loadQuestion(); 
+        }
+        
         function tryAgain() { 
             document.getElementById('feedback').style.display = 'none'; 
             document.getElementById('controls').style.display = 'none'; 
             document.getElementById('options').style.display = 'block'; 
         }
 
-        // 6. أدوات الذكاء الاصطناعي للشرح (نسخ ولصق ذكي)
+        // أدوات الذكاء الاصطناعي الخارجية
         function askExternalAI(platform) {
-            const currentQ = questionsList[currentQIndex];
-            if(!currentQ) return;
+            const currentQ = questionsList[currentQIndex]; 
             
-            const promptText = currentLang === 'ar' 
-                ? `اشرحلي إجابة السؤال ده بالتفصيل الأكاديمي:\n\nالسؤال:\n${currentQ.q}\n\nالإجابة الصحيحة:\n${currentQ.a}` 
-                : `Explain the answer to this question in academic detail:\n\nQuestion:\n${currentQ.q}\n\nCorrect Answer:\n${currentQ.a}`;
+            if(!currentQ) {
+                return;
+            }
             
-            navigator.clipboard.writeText(promptText).then(() => {
-                showToast(t('js_copied'));
-                setTimeout(() => {
-                    if(platform === 'chatgpt') window.open('https://chatgpt.com/', '_blank');
-                    if(platform === 'gemini') window.open('https://gemini.google.com/app', '_blank');
-                }, 1200);
+            const promptText = currentLang === 'ar' ? `اشرحلي إجابة السؤال ده بالتفصيل الأكاديمي:\n\nالسؤال:\n${currentQ.q}\n\nالإجابة الصحيحة:\n${currentQ.a}` : `Explain the answer to this question in academic detail:\n\nQuestion:\n${currentQ.q}\n\nCorrect Answer:\n${currentQ.a}`;
+            
+            navigator.clipboard.writeText(promptText).then(() => { 
+                showToast(t('copySuccess')); 
+                setTimeout(() => { 
+                    if(platform === 'chatgpt') {
+                        window.open('https://chatgpt.com/', '_blank'); 
+                    }
+                    if(platform === 'gemini') {
+                        window.open('https://gemini.google.com/app', '_blank'); 
+                    }
+                }, 1200); 
             });
         }
 
-        // 7. نظام الصوت الذكي
-        function updateSoundBtnUI() {
-            const btn = document.getElementById('soundToggleBtn');
-            if(btn) {
-                btn.innerHTML = isSoundEnabled 
-                    ? (currentLang === 'ar' ? '🔊 الصوت شغال' : '🔊 Sound On') 
-                    : (currentLang === 'ar' ? '🔇 الصوت مكتوم' : '🔇 Sound Off');
-            }
+        // التحكم في الصوت
+        function updateSoundBtnUI() { 
+            const btn = document.getElementById('soundToggleBtn'); 
+            if(btn) { 
+                btn.innerHTML = isSoundEnabled ? (currentLang === 'ar' ? '🔊 الصوت شغال' : '🔊 Sound On') : (currentLang === 'ar' ? '🔇 الصوت مكتوم' : '🔇 Sound Off'); 
+            } 
         }
-
-        function toggleQuizSound() {
-            isSoundEnabled = !isSoundEnabled;
-            localStorage.setItem('zaker_sound', isSoundEnabled ? 'enabled' : 'disabled');
-            updateSoundBtnUI();
-            showToast(isSoundEnabled ? (currentLang === 'ar' ? 'تم تشغيل الصوت 🔊' : 'Sound On 🔊') : (currentLang === 'ar' ? 'تم كتم الصوت 🔇' : 'Sound Off 🔇'));
+        
+        function toggleQuizSound() { 
+            isSoundEnabled = !isSoundEnabled; 
+            localStorage.setItem('zaker_sound', isSoundEnabled ? 'enabled' : 'disabled'); 
+            updateSoundBtnUI(); 
+            showToast(isSoundEnabled ? (currentLang === 'ar' ? 'تم تشغيل الصوت 🔊' : 'Sound On 🔊') : (currentLang === 'ar' ? 'تم كتم الصوت 🔇' : 'Sound Off 🔇')); 
         }
-
+        
         function playQuizSound(type) {
-            if (!isSoundEnabled) return;
+            if (!isSoundEnabled) {
+                return;
+            }
+            
             try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
                 
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                osc.connect(gainNode);
+                const osc = audioCtx.createOscillator(); 
+                const gainNode = audioCtx.createGain(); 
+                osc.connect(gainNode); 
                 gainNode.connect(audioCtx.destination);
                 
-                if (type === 'correct') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.15);
-                } else if (type === 'wrong') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
-                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.25);
+                if (type === 'correct') { 
+                    osc.type = 'sine'; 
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1); 
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); 
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); 
+                    osc.start(); 
+                    osc.stop(audioCtx.currentTime + 0.15); 
+                } else if (type === 'wrong') { 
+                    osc.type = 'sawtooth'; 
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime); 
+                    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2); 
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); 
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2); 
+                    osc.start(); 
+                    osc.stop(audioCtx.currentTime + 0.25); 
                 }
-            } catch(e) { console.error("Audio error", e); }
+            } catch(e) {
+                console.error("Audio error:", e);
+            }
         }
     </script>
 </body>
