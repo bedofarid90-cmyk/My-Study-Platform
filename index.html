@@ -105,7 +105,7 @@
                 document.getElementById('loginBtn').classList.remove('hidden');
                 document.getElementById('userProfile').classList.add('hidden');
                 document.getElementById('quoteText').style.display = 'block';
-                document.getElementById('quoteText').innerText = t('loginPrompt'); // تم الإصلاح هنا
+                document.getElementById('quoteText').innerText = t('loginPrompt');
                 
                 globalData.subjectsMeta = { 
                     'demo1': { name: currentLang === 'ar' ? 'تحليل وتصميم النظم' : 'Systems Analysis', icon: '📊' }, 
@@ -145,14 +145,17 @@
             
             for (let key in meta) {
                 let alertText = t('demoAlert');
-                // تم إصلاح مسار الأقواس لضمان عدم ظهور الكود كنص
-                let clickAction = isDemo ? `showToast("${alertText}", "error")` : `goToSubject('${key}', '${meta[key].name}')`;
-                let deleteAction = isDemo ? `showToast("${alertText}", "error"); event.stopPropagation();` : `deleteSubject('${key}', event)`;
+                // الإصلاح هنا: تأمين علامات التنصيص المزدوجة والمفردة
+                let safeName = meta[key].name.replace(/'/g, "\\'");
                 
+                let clickAction = isDemo ? `showToast('${alertText}', 'error')` : `goToSubject('${key}', '${safeName}')`;
+                let deleteAction = isDemo ? `showToast('${alertText}', 'error'); event.stopPropagation();` : `deleteSubject('${key}', event)`;
+                
+                // استخدام علامات تنصيص مزدوجة " " للـ attributes
                 container.innerHTML += `
-                    <div class="card" style="position: relative;" onclick='${clickAction}'>
+                    <div class="card" style="position: relative;" onclick="${clickAction}">
                         <div style="position: absolute; top: 10px; ${currentLang === 'ar' ? 'left: 10px;' : 'right: 10px;'} z-index: 10;">
-                            <button onclick='${deleteAction}' style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
+                            <button onclick="${deleteAction}" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
                         </div>
                         <div style="height: 100%; display:flex; flex-direction:column; justify-content:center;">
                             <h3>${meta[key].icon} ${meta[key].name}</h3>
@@ -163,7 +166,7 @@
 
         function addNewSubject() {
             if (!currentUser) return showToast(t('demoAlert'), 'error');
-            customPrompt(currentLang === 'ar' ? "اسم المادة الجديدة:" : "New Subject Name:", "", async function(subName) {
+            customPrompt(t('newSubjLabel'), "", async function(subName) {
                 if (!subName || subName.trim() === "") return;
                 let subKey = 'subj_' + Date.now();
                 
