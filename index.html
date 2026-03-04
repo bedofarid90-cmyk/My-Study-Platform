@@ -16,6 +16,7 @@
                 <button class="icon-btn" onclick="toggleLanguage()" title="Language">🌐</button>
                 <button class="icon-btn" onclick="toggleTheme()" title="Theme">🌙</button>
             </div>
+            
             <button id="loginBtn" class="btn btn-primary" onclick="loginWithGoogle()" data-i18n="loginBtn">تسجيل دخول 🚀</button>
             
             <div id="userProfile" class="hidden user-profile-badge">
@@ -90,11 +91,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
     <script src="app.js"></script>
     
     <script>
-        // مراقبة حالة تسجيل الدخول
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user;
@@ -103,9 +102,11 @@
                 document.getElementById('userProfile').classList.remove('hidden');
                 document.getElementById('userImg').src = user.photoURL;
                 document.getElementById('userName').innerText = user.displayName.split(' ')[0];
-                document.getElementById('quoteText').style.display = 'none'; 
                 
+                // الحل السحري لظهور العبارات: مسح داتا الترجمة عشان المولد يشتغل مكانها
+                document.getElementById('quoteText').removeAttribute('data-i18n');
                 changeQuote(); 
+                
                 loadSubjects();
             } else {
                 currentUser = null;
@@ -115,56 +116,33 @@
                 document.getElementById('quoteText').style.display = 'block';
                 document.getElementById('quoteText').innerText = t('loginPrompt');
                 
-                // إضافة مواد العرض الوهمية للمستخدم غير المسجل
+                // وضع العرض للزوار
                 globalData.subjectsMeta = { 
-                    'demo1': { 
-                        name: currentLang === 'ar' ? 'تحليل وتصميم النظم' : 'Systems Analysis', 
-                        icon: '📊' 
-                    }, 
-                    'demo2': { 
-                        name: currentLang === 'ar' ? 'هياكل البيانات' : 'Data Structures', 
-                        icon: '💻' 
-                    } 
+                    'demo1': { name: currentLang === 'ar' ? 'تحليل وتصميم النظم' : 'Systems Analysis', icon: '📊' }, 
+                    'demo2': { name: currentLang === 'ar' ? 'هياكل البيانات' : 'Data Structures', icon: '💻' } 
                 };
-                
                 renderSubjects(true); 
             }
         });
 
-        // تحميل المواد من قاعدة البيانات
         async function loadSubjects() {
             try {
                 const doc = await db.collection('users').doc(currentUser.uid).get();
-                
                 if (doc.exists) {
                     globalData = doc.data();
-                    
-                    if (!globalData.subjectsMeta) {
-                        globalData.subjectsMeta = {};
-                    }
-                    if (!globalData.allData) {
-                        globalData.allData = {};
-                    }
-                    if (!globalData.userProgress) {
-                        globalData.userProgress = {};
-                    }
+                    if(!globalData.subjectsMeta) globalData.subjectsMeta = {};
+                    if(!globalData.allData) globalData.allData = {};
+                    if(!globalData.userProgress) globalData.userProgress = {};
                 } else {
-                    globalData = { 
-                        subjectsMeta: {}, 
-                        allData: {}, 
-                        userProgress: {} 
-                    };
+                    globalData = { subjectsMeta: {}, allData: {}, userProgress: {} };
                     await db.collection('users').doc(currentUser.uid).set(globalData);
                 }
-                
                 renderSubjects(false);
-                
             } catch (error) {
-                console.error("حدث خطأ أثناء تحميل البيانات: ", error);
+                console.error(error);
             }
         }
 
-        // رسم كروت المواد على الشاشة
         function renderSubjects(isDemo = false) {
             const container = document.getElementById('subjectsContainer');
             container.innerHTML = '';
@@ -180,16 +158,8 @@
                 let alertText = t('demoAlert');
                 let safeName = meta[key].name.replace(/'/g, "\\'");
                 
-                let clickAction = "";
-                let deleteAction = "";
-                
-                if (isDemo) {
-                    clickAction = `showToast('${alertText}', 'error')`;
-                    deleteAction = `showToast('${alertText}', 'error'); event.stopPropagation();`;
-                } else {
-                    clickAction = `goToSubject('${key}', '${safeName}')`;
-                    deleteAction = `deleteSubject('${key}', event)`;
-                }
+                let clickAction = isDemo ? `showToast('${alertText}', 'error')` : `goToSubject('${key}', '${safeName}')`;
+                let deleteAction = isDemo ? `showToast('${alertText}', 'error'); event.stopPropagation();` : `deleteSubject('${key}', event)`;
                 
                 container.innerHTML += `
                     <div class="card" style="position: relative;" onclick="${clickAction}">
@@ -203,45 +173,27 @@
             }
         }
 
-        // إضافة مادة جديدة
         function addNewSubject() {
-            if (!currentUser) {
-                showToast(t('demoAlert'), 'error');
-                return;
-            }
+            if (!currentUser) return showToast(t('demoAlert'), 'error');
             
             customPrompt(t('newSubjLabel'), "", async function(subName) {
-                if (!subName || subName.trim() === "") {
-                    return;
-                }
+                if (!subName || subName.trim() === "") return;
                 
                 let subKey = 'subj_' + Date.now();
                 
-                globalData.subjectsMeta[subKey] = { 
-                    name: sanitizeInput(subName.trim()), 
-                    icon: '📚' 
-                };
+                globalData.subjectsMeta[subKey] = { name: sanitizeInput(subName.trim()), icon: '📚' };
                 globalData.allData[subKey] = {};
-                globalData.userProgress[subKey] = { 
-                    total: 0, 
-                    correct: 0, 
-                    wrong: 0 
-                };
+                globalData.userProgress[subKey] = { total: 0, correct: 0, wrong: 0 };
                 
                 await db.collection('users').doc(currentUser.uid).set(globalData, { merge: true });
-                
                 renderSubjects(false);
                 showToast(t('js_saved'));
             });
         }
 
-        // مسح مادة
         function deleteSubject(key, event) {
             event.stopPropagation();
-            
-            if (!currentUser) {
-                return;
-            }
+            if (!currentUser) return;
             
             customConfirm(t('confirmMsg'), async function() {
                 delete globalData.subjectsMeta[key];
@@ -259,7 +211,6 @@
             });
         }
 
-        // الانتقال لصفحة المحاضرات
         function goToSubject(key, name) {
             localStorage.setItem('currentSubjectKey', key);
             localStorage.setItem('currentSubjectName', name);

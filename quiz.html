@@ -88,7 +88,6 @@
     <script src="app.js"></script>
     
     <script>
-        // تعريف المتغيرات بشكل منفصل وواضح
         const currentSubjectKey = localStorage.getItem('currentSubjectKey');
         const currentSubjectName = localStorage.getItem('currentSubjectName');
         const currentLectureName = localStorage.getItem('currentLectureName');
@@ -103,12 +102,10 @@
         let audioCtx = null; 
         let isSoundEnabled = localStorage.getItem('zaker_sound') !== 'disabled';
 
-        // التحقق من المسار
         if (!currentSubjectKey || !currentLectureName) {
             window.location.href = 'index.html';
         }
 
-        // تسجيل الدخول وجلب البيانات
         auth.onAuthStateChanged(async user => {
             if (user) {
                 currentUser = user; 
@@ -150,7 +147,6 @@
             }
         });
 
-        // بدء الاختبار
         function startQuiz() {
             currentQIndex = 0; 
             examScore = 0; 
@@ -175,7 +171,6 @@
             loadQuestion();
         }
 
-        // تحميل السؤال
         function loadQuestion() {
             document.getElementById('feedback').style.display = 'none'; 
             document.getElementById('controls').style.display = 'none';
@@ -231,7 +226,6 @@
             }
         }
 
-        // فحص الإجابة
         async function checkAnswer(userAnswer) {
             const currentQ = questionsList[currentQIndex]; 
             globalData.userProgress[currentSubjectKey].total++;
@@ -282,7 +276,6 @@
             db.collection('users').doc(currentUser.uid).set({ userProgress: globalData.userProgress }, { merge: true });
         }
 
-        // إنهاء الامتحان
         function endExam() {
             clearInterval(examTimerInterval); 
             const totalQs = questionsList.length; 
@@ -322,7 +315,6 @@
             document.getElementById('examResultScreen').classList.add('active');
         }
 
-        // عداد الوقت
         function timerTick() { 
             examTimeLeft--; 
             updateTimerDisplay(); 
@@ -344,7 +336,6 @@
             window.location.href = 'lecture.html'; 
         }
 
-        // التنقل بين الأسئلة
         function nextQuestion() { 
             currentQIndex++; 
             loadQuestion(); 
@@ -375,7 +366,6 @@
             document.getElementById('options').style.display = 'block'; 
         }
 
-        // أدوات الذكاء الاصطناعي الخارجية
         function askExternalAI(platform) {
             const currentQ = questionsList[currentQIndex]; 
             
@@ -398,7 +388,6 @@
             });
         }
 
-        // التحكم في الصوت
         function updateSoundBtnUI() { 
             const btn = document.getElementById('soundToggleBtn'); 
             if(btn) { 
