@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zaker - Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="dark">
@@ -42,10 +42,11 @@
         <div style="margin-top: 50px; border-top: 2px dashed var(--input-border); padding-top: 35px; text-align: center;">
             <h2 style="color: var(--primary-color); margin-bottom: 10px;" data-i18n="shareTitle">🤝 شارك الدحيحة (بنك الأسئلة)</h2>
             <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 25px;" data-i18n="shareDesc">
-                تقدر تنزل أسئلتك في ملف وتبعته لزمايلك في الدفعة يذاكروا منه، أو ترفع ملف أسئلة جاهز بتاع حد من صحابك والمنصة هتبرمجهولك أوتوماتيك!
+                تقدر تنزل أسئلتك في ملف وتبعته لزمايلك يذاكروا منه، أو ترفع ملف أسئلة جاهز بتاع حد من صحابك والمنصة هتبرمجهولك أوتوماتيك!
             </p>
             <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="exportData()" style="background-color: #3b82f6;" data-i18n="exportBtn">⬇️ تنزيل أسئلتي للمشاركة</button>
+                <button class="btn btn-secondary" onclick="exportToPDF()" style="background-color: #ef4444;" data-i18n="exportPdfBtn">📄 تنزيل أسئلتي كـ PDF</button>
+                <button class="btn btn-secondary" onclick="exportData()" style="background-color: #3b82f6;" data-i18n="exportBtn">📦 تصدير الداتا لزمايلي</button>
                 <button class="btn btn-success" onclick="document.getElementById('importFile').click()" data-i18n="importBtn">⬆️ رفع أسئلة زمايلي</button>
                 <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
             </div>
@@ -97,21 +98,20 @@
                 document.getElementById('userImg').src = user.photoURL;
                 document.getElementById('userName').innerText = user.displayName.split(' ')[0];
                 document.getElementById('quoteText').style.display = 'none'; 
-                changeQuote(); // تفعيل العبارات
+                changeQuote(); 
                 loadSubjects();
             } else {
                 currentUser = null;
                 document.getElementById('loginBtn').classList.remove('hidden');
                 document.getElementById('userProfile').classList.add('hidden');
                 document.getElementById('quoteText').style.display = 'block';
-                document.getElementById('quoteText').innerText = t('js_demo');
+                document.getElementById('quoteText').innerText = t('loginPrompt'); // تم الإصلاح هنا
                 
-                // إضافة مواد العرض للزوار
                 globalData.subjectsMeta = { 
                     'demo1': { name: currentLang === 'ar' ? 'تحليل وتصميم النظم' : 'Systems Analysis', icon: '📊' }, 
                     'demo2': { name: currentLang === 'ar' ? 'هياكل البيانات' : 'Data Structures', icon: '💻' } 
                 };
-                renderSubjects(true); // true تعني وضع العرض
+                renderSubjects(true); 
             }
         });
 
@@ -139,19 +139,20 @@
             
             const meta = globalData.subjectsMeta;
             if (Object.keys(meta).length === 0) {
-                container.innerHTML = `<p style="text-align:center; width:100%; opacity:0.7;" data-i18n="emptySubject">${t('emptySubject')}</p>`;
+                container.innerHTML = `<p style="text-align:center; width:100%; opacity:0.7;">${t('emptySubject')}</p>`;
                 return;
             }
             
             for (let key in meta) {
-                // لو ديمو، الكليك تطلع رسالة، لو مسجل دخول تنقلك لصفحة المحاضرات
-                let clickAction = isDemo ? `showToast(t('demoAlert'), 'error')` : `goToSubject('${key}', '${meta[key].name}')`;
-                let deleteAction = isDemo ? `showToast(t('demoAlert'), 'error'); event.stopPropagation();` : `deleteSubject('${key}', event)`;
+                let alertText = t('demoAlert');
+                // تم إصلاح مسار الأقواس لضمان عدم ظهور الكود كنص
+                let clickAction = isDemo ? `showToast("${alertText}", "error")` : `goToSubject('${key}', '${meta[key].name}')`;
+                let deleteAction = isDemo ? `showToast("${alertText}", "error"); event.stopPropagation();` : `deleteSubject('${key}', event)`;
                 
                 container.innerHTML += `
-                    <div class="card" style="position: relative;" onclick="${clickAction}">
+                    <div class="card" style="position: relative;" onclick='${clickAction}'>
                         <div style="position: absolute; top: 10px; ${currentLang === 'ar' ? 'left: 10px;' : 'right: 10px;'} z-index: 10;">
-                            <button onclick="${deleteAction}" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
+                            <button onclick='${deleteAction}' style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
                         </div>
                         <div style="height: 100%; display:flex; flex-direction:column; justify-content:center;">
                             <h3>${meta[key].icon} ${meta[key].name}</h3>
@@ -162,7 +163,7 @@
 
         function addNewSubject() {
             if (!currentUser) return showToast(t('demoAlert'), 'error');
-            customPrompt(t('newSubjLabel'), "", async function(subName) {
+            customPrompt(currentLang === 'ar' ? "اسم المادة الجديدة:" : "New Subject Name:", "", async function(subName) {
                 if (!subName || subName.trim() === "") return;
                 let subKey = 'subj_' + Date.now();
                 
