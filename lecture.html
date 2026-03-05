@@ -65,11 +65,11 @@
         <button class="btn btn-secondary" onclick="showScreen('lecturesScreen')" style="margin-bottom: 20px;" data-i18n="backToLecsBtn">🔙 رجوع للمحاضرات</button>
         <h2 id="lectureTitle" style="color: var(--primary-color); border-bottom: 3px solid; padding-bottom: 10px; display: inline-block;">اسم المحاضرة</h2>
         
-        <div class="card-container" style="margin-top: 30px;">
-            <div class="card" onclick="goToQuiz(false)">
-                <h3 data-i18n="openStudyTitle">📝 المذاكرة المفتوحة</h3>
-                <p data-i18n="openStudyDesc">حل براحتك وشوف الإجابات والشرح فوراً</p>
-                <p id="lectureQCount1" style="font-weight: bold; margin-top: 10px; color: var(--primary-color);"></p>
+        <div class="grid-2x2" style="margin-top: 30px;">
+            
+            <div class="card" onclick="openAddQuestion()" style="border-color: var(--success-color);">
+                <h3 style="color: var(--success-color);" data-i18n="addQsBtn">➕ إضافة أسئلة</h3>
+                <p data-i18n="addQsDesc">إضافة أسئلة مفردة أو باستخدام الذكاء الاصطناعي</p>
             </div>
             
             <div class="card" onclick="goToQuiz(true)" style="border-color: var(--danger-color);">
@@ -78,15 +78,17 @@
                 <p id="lectureQCount2" style="font-weight: bold; margin-top: 10px; color: var(--danger-color);"></p>
             </div>
             
-            <div class="card" onclick="openAddQuestion()" style="border-color: var(--success-color);">
-                <h3 style="color: var(--success-color);" data-i18n="addQsBtn">➕ إضافة أسئلة</h3>
-                <p data-i18n="addQsDesc">إضافة أسئلة مفردة أو باستخدام الذكاء الاصطناعي</p>
+            <div class="card" onclick="goToQuiz(false)">
+                <h3 data-i18n="openStudyTitle">📝 المذاكرة المفتوحة</h3>
+                <p data-i18n="openStudyDesc">حل براحتك وشوف الإجابات والشرح فوراً</p>
+                <p id="lectureQCount1" style="font-weight: bold; margin-top: 10px; color: var(--primary-color);"></p>
             </div>
-            
+
             <div class="card" onclick="openManageQuestions()" style="border-color: #f39c12;">
                 <h3 style="color: #f39c12;" data-i18n="manageQsBtn">⚙️ إدارة الأسئلة</h3>
                 <p data-i18n="manageQsDesc">تعديل وحذف الأسئلة الموجودة</p>
             </div>
+
         </div>
     </div>
 
@@ -366,7 +368,7 @@
             showScreen('lectureDashboardScreen');
         }
 
-        // دالة بدء الامتحان الشامل 
+        // دالة الامتحان الشامل
         function startComprehensiveExam() {
             let totalQsCount = 0;
             const lectures = globalData.allData[currentSubjectKey];
@@ -376,13 +378,13 @@
             }
             
             if (totalQsCount === 0) {
-                showToast(t('notEnoughQs'), 'error'); // تم الاستبدال هنا
+                // إظهار إشعار شيك بدلا من الأليرت
+                showToast(t('notEnoughQs'), 'error'); 
                 return;
             }
             
-            // تعيين إشارات التوجيه للمتصفح
             localStorage.setItem('isComprehensiveMode', 'true');
-            localStorage.setItem('isExamMode', 'true'); // الفاينال الشامل دايما بيكون فاينال بوقت
+            localStorage.setItem('isExamMode', 'true'); 
             window.location.href = 'quiz.html';
         }
 
@@ -438,7 +440,8 @@
             const exp = sanitizeInput(document.getElementById('qExplanation').value.trim());
             
             if(!q) {
-                return showToast(t('emptyQAlert'), 'error'); // تم الاستبدال هنا
+                // إظهار إشعار شيك
+                return showToast(t('emptyQAlert'), 'error'); 
             }
             
             let newQ = { type, q, explanation: exp }; 
@@ -458,8 +461,8 @@
                 
                 if (ansIndex === '1') correctAns = o1; 
                 else if (ansIndex === '2') correctAns = o2; 
-                else if (ansIndex === '3' && o3) correctAns = o3; 
-                else if (ansIndex === '4' && o4) correctAns = o4; 
+                else if (ansIndex === '3') correctAns = o3; 
+                else if (ansIndex === '4') correctAns = o4; 
                 
                 newQ.a = correctAns; 
             } else { 
@@ -511,7 +514,8 @@
                         aiTextarea.value = fullText; 
                         showToast(t('doneSuccess'));
                     } catch(err) { 
-                        showToast(t('pdfError'), 'error'); // تم الاستبدال هنا
+                        // إشعار شيك
+                        showToast(t('pdfError'), 'error'); 
                     }
                 };
                 reader.readAsArrayBuffer(file);
@@ -524,11 +528,11 @@
                             aiTextarea.value = result.value; 
                             showToast(t('doneSuccess')); 
                         })
-                        .catch(err => showToast(t('wordError'), 'error')); // تم الاستبدال هنا
+                        .catch(err => showToast(t('wordError'), 'error')); // إشعار شيك
                 };
                 reader.readAsArrayBuffer(file);
             } else { 
-                showToast(t('unsupportedFormat'), 'error'); // تم الاستبدال هنا
+                showToast(t('unsupportedFormat'), 'error'); // إشعار شيك
             }
         }
 
@@ -559,7 +563,7 @@
             const qType = document.getElementById('aiQType').value;
             
             if (!sourceText) {
-                return showToast(t('pasteSourceAlert'), 'error'); // تم الاستبدال هنا
+                return showToast(t('pasteSourceAlert'), 'error'); // إشعار شيك
             }
             
             let typeInstruction = "";
@@ -576,13 +580,13 @@
             navigator.clipboard.writeText(prompt).then(() => { 
                 showToast(t('copySuccess')); 
                 document.getElementById('aiActionButtons').style.display = 'flex'; 
-            }).catch(err => showToast(t('copyFail'), 'error')); // تم الاستبدال هنا
+            }).catch(err => showToast(t('copyFail'), 'error')); // إشعار شيك
         }
 
         async function saveBulkQuestions() {
             const text = document.getElementById('bulkText').value.trim(); 
             if(!text) {
-                return showToast(t('emptyBulkAlert'), 'error'); // تم الاستبدال هنا
+                return showToast(t('emptyBulkAlert'), 'error'); // إشعار شيك
             }
             
             const blocks = text.split(/\n\s*\n/); 
@@ -627,7 +631,7 @@
                 renderLectures(); 
                 openLectureDashboard(currentLectureName); 
             } else { 
-                showToast(t('noQsExtracted'), 'error'); // تم الاستبدال هنا
+                showToast(t('noQsExtracted'), 'error'); // إشعار شيك
             }
         }
 
@@ -712,7 +716,7 @@
             const questions = globalData.allData[currentSubjectKey][currentLectureName];
             
             if (!questions || questions.length === 0) { 
-                showToast(t('noQsInLec'), 'error'); // تم الاستبدال هنا
+                showToast(t('noQsInLec'), 'error'); // إشعار شيك
                 return; 
             }
             
