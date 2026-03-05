@@ -36,6 +36,8 @@
         
         <div class="quiz-container">
             
+            <h2 id="lectureTitleQuiz" style="color: var(--primary-color); border-bottom: 2px dashed var(--input-border); padding-bottom: 15px; text-align: center; margin-top: 0;">عنوان الامتحان</h2>
+
             <div id="examTimerContainer" class="hidden exam-timer">
                 <span data-i18n="timeLabel">⏱️ الوقت:</span> <span id="examTimerText">00:00</span>
             </div>
@@ -91,7 +93,9 @@
         const currentSubjectKey = localStorage.getItem('currentSubjectKey');
         const currentSubjectName = localStorage.getItem('currentSubjectName');
         const currentLectureName = localStorage.getItem('currentLectureName');
+        
         const isExamMode = localStorage.getItem('isExamMode') === 'true';
+        const isComprehensiveMode = localStorage.getItem('isComprehensiveMode') === 'true';
 
         let currentQIndex = 0; 
         let examScore = 0; 
@@ -102,7 +106,7 @@
         let audioCtx = null; 
         let isSoundEnabled = localStorage.getItem('zaker_sound') !== 'disabled';
 
-        if (!currentSubjectKey || !currentLectureName) {
+        if (!currentSubjectKey) {
             window.location.href = 'index.html';
         }
 
@@ -131,13 +135,21 @@
                             };
                         }
                         
-                        if (globalData.allData && globalData.allData[currentSubjectKey] && globalData.allData[currentSubjectKey][currentLectureName]) {
-                            questionsList = globalData.allData[currentSubjectKey][currentLectureName]; 
-                            startQuiz();
-                        } else { 
-                            alert(t('noQsInLec')); 
-                            window.location.href = 'lecture.html'; 
+                        if (isComprehensiveMode) {
+                            generateComprehensiveQuestions();
+                            document.getElementById('lectureTitleQuiz').innerText = currentSubjectName + ' - ' + t('compExamTitle');
+                        } else {
+                            if (globalData.allData && globalData.allData[currentSubjectKey] && globalData.allData[currentSubjectKey][currentLectureName]) {
+                                questionsList = globalData.allData[currentSubjectKey][currentLectureName]; 
+                                document.getElementById('lectureTitleQuiz').innerText = currentSubjectName + ' - ' + currentLectureName;
+                            } else { 
+                                showToast(t('noQsInLec'), 'error'); // تم الاستبدال هنا
+                                setTimeout(() => window.location.href = 'lecture.html', 1500); 
+                                return;
+                            }
                         }
+                        
+                        startQuiz();
                     }
                 } catch (e) { 
                     console.error(e); 
@@ -146,6 +158,31 @@
                 window.location.href = 'index.html'; 
             }
         });
+
+        function generateComprehensiveQuestions() {
+            let allMCQ = [];
+            let allTF = [];
+            
+            const lectures = globalData.allData[currentSubjectKey];
+            
+            for (let lec in lectures) {
+                lectures[lec].forEach(q => {
+                    if (q.type === 'mcq') {
+                        allMCQ.push(q);
+                    } else if (q.type === 'tf') {
+                        allTF.push(q);
+                    }
+                });
+            }
+            
+            allMCQ = allMCQ.sort(() => 0.5 - Math.random());
+            allTF = allTF.sort(() => 0.5 - Math.random());
+            
+            let selectedMCQ = allMCQ.slice(0, 20);
+            let selectedTF = allTF.slice(0, 20);
+            
+            questionsList = [...selectedMCQ, ...selectedTF].sort(() => 0.5 - Math.random());
+        }
 
         function startQuiz() {
             currentQIndex = 0; 
@@ -217,7 +254,7 @@
                     endExam(); 
                 } else {
                     document.getElementById('quizProgress').innerText = currentLang === 'ar' ? "تم الانتهاء" : "Finished";
-                    document.getElementById('questionText').innerText = currentLang === 'ar' ? "🎉 لقد أتممت جميع أسئلة المحاضرة بنجاح!" : "🎉 You have successfully completed all questions!";
+                    document.getElementById('questionText').innerText = currentLang === 'ar' ? "🎉 لقد أتممت جميع الأسئلة بنجاح!" : "🎉 You have successfully completed all questions!";
                     
                     optionsDiv.style.display = 'none'; 
                     document.getElementById('normalNavControls').style.display = 'none'; 
@@ -281,7 +318,7 @@
             const totalQs = questionsList.length; 
             const percent = Math.round((examScore / totalQs) * 100);
             
-            if (percent === 100) {
+            if (percent >= 90) {
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             }
             
@@ -320,7 +357,7 @@
             updateTimerDisplay(); 
             if (examTimeLeft <= 0) { 
                 clearInterval(examTimerInterval); 
-                alert(t('js_timeUp')); 
+                showToast(t('js_timeUp'), 'error'); // تم الاستبدال هنا
                 endExam(); 
             } 
         }

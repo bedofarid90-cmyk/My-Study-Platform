@@ -269,7 +269,6 @@
             window.scrollTo(0, 0);
         }
 
-        // ================= الإحصائيات =================
         function updateDashboardUI() { 
             let prog = globalData.userProgress[currentSubjectKey]; 
             document.getElementById('statTotal').innerText = prog.total; 
@@ -287,7 +286,6 @@
             }); 
         }
 
-        // ================= المحاضرات والامتحان الشامل =================
         function renderLectures() {
             const container = document.getElementById('lecturesList'); 
             container.innerHTML = ''; 
@@ -378,7 +376,7 @@
             }
             
             if (totalQsCount === 0) {
-                alert(t('notEnoughQs'));
+                showToast(t('notEnoughQs'), 'error'); // تم الاستبدال هنا
                 return;
             }
             
@@ -388,7 +386,6 @@
             window.location.href = 'quiz.html';
         }
 
-        // ================= إضافة الأسئلة =================
         function toggleAddMode(mode) { 
             if(mode === 'single') { 
                 document.getElementById('singleAddMode').classList.remove('hidden'); 
@@ -440,7 +437,9 @@
             const q = sanitizeInput(document.getElementById('qText').value.trim()); 
             const exp = sanitizeInput(document.getElementById('qExplanation').value.trim());
             
-            if(!q) return alert(t('emptyQAlert')); 
+            if(!q) {
+                return showToast(t('emptyQAlert'), 'error'); // تم الاستبدال هنا
+            }
             
             let newQ = { type, q, explanation: exp }; 
             let correctAns = "";
@@ -512,7 +511,7 @@
                         aiTextarea.value = fullText; 
                         showToast(t('doneSuccess'));
                     } catch(err) { 
-                        alert(t('pdfError')); 
+                        showToast(t('pdfError'), 'error'); // تم الاستبدال هنا
                     }
                 };
                 reader.readAsArrayBuffer(file);
@@ -525,11 +524,11 @@
                             aiTextarea.value = result.value; 
                             showToast(t('doneSuccess')); 
                         })
-                        .catch(err => alert(t('wordError')));
+                        .catch(err => showToast(t('wordError'), 'error')); // تم الاستبدال هنا
                 };
                 reader.readAsArrayBuffer(file);
             } else { 
-                alert(t('unsupportedFormat')); 
+                showToast(t('unsupportedFormat'), 'error'); // تم الاستبدال هنا
             }
         }
 
@@ -559,7 +558,9 @@
             const qCount = document.getElementById('aiQCount').value; 
             const qType = document.getElementById('aiQType').value;
             
-            if (!sourceText) return alert(t('pasteSourceAlert'));
+            if (!sourceText) {
+                return showToast(t('pasteSourceAlert'), 'error'); // تم الاستبدال هنا
+            }
             
             let typeInstruction = "";
             if (qType === "mcq") {
@@ -575,12 +576,14 @@
             navigator.clipboard.writeText(prompt).then(() => { 
                 showToast(t('copySuccess')); 
                 document.getElementById('aiActionButtons').style.display = 'flex'; 
-            }).catch(err => alert(t('copyFail')));
+            }).catch(err => showToast(t('copyFail'), 'error')); // تم الاستبدال هنا
         }
 
         async function saveBulkQuestions() {
             const text = document.getElementById('bulkText').value.trim(); 
-            if(!text) return alert(t('emptyBulkAlert'));
+            if(!text) {
+                return showToast(t('emptyBulkAlert'), 'error'); // تم الاستبدال هنا
+            }
             
             const blocks = text.split(/\n\s*\n/); 
             let added = 0;
@@ -624,7 +627,7 @@
                 renderLectures(); 
                 openLectureDashboard(currentLectureName); 
             } else { 
-                alert(t('noQsExtracted')); 
+                showToast(t('noQsExtracted'), 'error'); // تم الاستبدال هنا
             }
         }
 
@@ -709,7 +712,7 @@
             const questions = globalData.allData[currentSubjectKey][currentLectureName];
             
             if (!questions || questions.length === 0) { 
-                alert(t('noQsInLec')); 
+                showToast(t('noQsInLec'), 'error'); // تم الاستبدال هنا
                 return; 
             }
             

@@ -258,7 +258,8 @@ let currentUser = null;
 let globalData = { subjectsMeta: {}, allData: {}, userProgress: {} };
 
 function loginWithGoogle() { 
-    auth.signInWithPopup(provider).catch(err => alert("Error: " + err.message)); 
+    // استبدال الـ alert بـ showToast
+    auth.signInWithPopup(provider).catch(err => showToast("خطأ: " + err.message, 'error')); 
 }
 
 function logout() { 
@@ -361,7 +362,8 @@ function importData(event) {
                 if(typeof renderSubjects === 'function') renderSubjects(false);
             }
         } catch (err) {
-            alert(currentLang === 'ar' ? 'يوجد خطأ، تأكد أنه ملف الداتا الخاص بالمنصة.' : 'Error. Ensure it is a valid Zaker data file.');
+            // استبدال الـ alert بـ showToast
+            showToast(currentLang === 'ar' ? 'يوجد خطأ، تأكد أنه ملف الداتا الخاص بالمنصة.' : 'Error. Ensure it is a valid Zaker data file.', 'error');
         }
     };
     reader.readAsText(file);
@@ -369,7 +371,7 @@ function importData(event) {
 }
 
 // =========================================
-// 5. العبارات التحفيزية (عربي + إنجليزي)
+// 5. العبارات التحفيزية
 // =========================================
 const motivationalQuotes = {
     ar: [
@@ -423,7 +425,7 @@ function showToast(message, type = 'success') {
     toast.innerText = message; 
     container.appendChild(toast); 
     
-    setTimeout(() => toast.remove(), 3000); 
+    setTimeout(() => toast.remove(), 3500); 
 }
 
 let confirmCallback = null; 
