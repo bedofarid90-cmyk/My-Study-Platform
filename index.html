@@ -94,6 +94,14 @@
     <script src="app.js"></script>
     
     <script>
+        // تفعيل زرار الـ Enter جوه مربع الإضافة
+        document.getElementById('promptInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('promptBtnYes').click();
+            }
+        });
+
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user;
@@ -103,7 +111,6 @@
                 document.getElementById('userImg').src = user.photoURL;
                 document.getElementById('userName').innerText = user.displayName.split(' ')[0];
                 
-                // الحل السحري لظهور العبارات: مسح داتا الترجمة عشان المولد يشتغل مكانها
                 document.getElementById('quoteText').removeAttribute('data-i18n');
                 changeQuote(); 
                 
@@ -116,7 +123,6 @@
                 document.getElementById('quoteText').style.display = 'block';
                 document.getElementById('quoteText').innerText = t('loginPrompt');
                 
-                // وضع العرض للزوار
                 globalData.subjectsMeta = { 
                     'demo1': { name: currentLang === 'ar' ? 'تحليل وتصميم النظم' : 'Systems Analysis', icon: '📊' }, 
                     'demo2': { name: currentLang === 'ar' ? 'هياكل البيانات' : 'Data Structures', icon: '💻' } 
@@ -130,6 +136,7 @@
                 const doc = await db.collection('users').doc(currentUser.uid).get();
                 if (doc.exists) {
                     globalData = doc.data();
+                    // تأمين البيانات لو ناقصة من السيرفر
                     if(!globalData.subjectsMeta) globalData.subjectsMeta = {};
                     if(!globalData.allData) globalData.allData = {};
                     if(!globalData.userProgress) globalData.userProgress = {};
@@ -139,7 +146,7 @@
                 }
                 renderSubjects(false);
             } catch (error) {
-                console.error(error);
+                console.error("Error loading subjects:", error);
             }
         }
 
@@ -149,14 +156,16 @@
             
             const meta = globalData.subjectsMeta;
             
-            if (Object.keys(meta).length === 0) {
+            // حماية من تعليق الشاشة لو الداتا فاضية
+            if (!meta || Object.keys(meta).length === 0) {
                 container.innerHTML = `<p style="text-align:center; width:100%; opacity:0.7;">${t('emptySubject')}</p>`;
                 return;
             }
             
             for (let key in meta) {
                 let alertText = t('demoAlert');
-                let safeName = meta[key].name.replace(/'/g, "\\'");
+                // حماية الكود من علامات التنصيص الفردية والمزدوجة
+                let safeName = meta[key].name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 
                 let clickAction = isDemo ? `showToast('${alertText}', 'error')` : `goToSubject('${key}', '${safeName}')`;
                 let deleteAction = isDemo ? `showToast('${alertText}', 'error'); event.stopPropagation();` : `deleteSubject('${key}', event)`;
@@ -174,20 +183,39 @@
         }
 
         function addNewSubject() {
-            if (!currentUser) return showToast(t('demoAlert'), 'error');
+            if (!currentUser) {
+                showToast(t('demoAlert'), 'error');
+                return;
+            }
             
             customPrompt(t('newSubjLabel'), "", async function(subName) {
-                if (!subName || subName.trim() === "") return;
-                
-                let subKey = 'subj_' + Date.now();
-                
-                globalData.subjectsMeta[subKey] = { name: sanitizeInput(subName.trim()), icon: '📚' };
-                globalData.allData[subKey] = {};
-                globalData.userProgress[subKey] = { total: 0, correct: 0, wrong: 0 };
-                
-                await db.collection('users').doc(currentUser.uid).set(globalData, { merge: true });
-                renderSubjects(false);
-                showToast(t('js_saved'));
+                try {
+                    if (!subName || subName.trim() === "") return;
+                    
+                    let subKey = 'subj_' + Date.now();
+                    
+                    // تأمين الكائنات بالكامل قبل الإضافة عشان المتصفح ميعملش Crash
+                    if (!globalData.subjectsMeta) globalData.subjectsMeta = {};
+                    if (!globalData.allData) globalData.allData = {};
+                    if (!globalData.userProgress) globalData.userProgress = {};
+
+                    globalData.subjectsMeta[subKey] = { name: sanitizeInput(subName.trim()), icon: '📚' };
+                    globalData.allData[subKey] = {};
+                    globalData.userProgress[subKey] = { total: 0, correct: 0, wrong: 0 };
+                    
+                    // استخدام merge عشان ميحذفش الداتا القديمة
+                    await db.collection('users').doc(currentUser.uid).set({
+                        subjectsMeta: globalData.subjectsMeta,
+                        allData: globalData.allData,
+                        userProgress: globalData.userProgress
+                    }, { merge: true });
+                    
+                    renderSubjects(false);
+                    showToast(t('js_saved'));
+                } catch (error) {
+                    console.error("خطأ في حفظ المادة:", error);
+                    showToast("حدث خطأ أثناء الحفظ، حاول مرة أخرى", "error");
+                }
             });
         }
 
@@ -196,18 +224,23 @@
             if (!currentUser) return;
             
             customConfirm(t('confirmMsg'), async function() {
-                delete globalData.subjectsMeta[key];
-                delete globalData.allData[key];
-                delete globalData.userProgress[key];
-                
-                await db.collection('users').doc(currentUser.uid).set({
-                    subjectsMeta: globalData.subjectsMeta,
-                    allData: globalData.allData,
-                    userProgress: globalData.userProgress
-                }, { merge: true });
-                
-                renderSubjects(false);
-                showToast(t('js_deleted'));
+                try {
+                    delete globalData.subjectsMeta[key];
+                    delete globalData.allData[key];
+                    delete globalData.userProgress[key];
+                    
+                    await db.collection('users').doc(currentUser.uid).set({
+                        subjectsMeta: globalData.subjectsMeta,
+                        allData: globalData.allData,
+                        userProgress: globalData.userProgress
+                    }, { merge: true });
+                    
+                    renderSubjects(false);
+                    showToast(t('js_deleted'));
+                } catch (error) {
+                    console.error("خطأ في مسح المادة:", error);
+                    showToast("حدث خطأ أثناء المسح", "error");
+                }
             });
         }
 
