@@ -94,7 +94,6 @@
     <script src="app.js"></script>
     
     <script>
-        // تفعيل زرار الـ Enter جوه مربع الإضافة
         document.getElementById('promptInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -136,7 +135,6 @@
                 const doc = await db.collection('users').doc(currentUser.uid).get();
                 if (doc.exists) {
                     globalData = doc.data();
-                    // تأمين البيانات لو ناقصة من السيرفر
                     if(!globalData.subjectsMeta) globalData.subjectsMeta = {};
                     if(!globalData.allData) globalData.allData = {};
                     if(!globalData.userProgress) globalData.userProgress = {};
@@ -156,7 +154,6 @@
             
             const meta = globalData.subjectsMeta;
             
-            // حماية من تعليق الشاشة لو الداتا فاضية
             if (!meta || Object.keys(meta).length === 0) {
                 container.innerHTML = `<p style="text-align:center; width:100%; opacity:0.7;">${t('emptySubject')}</p>`;
                 return;
@@ -164,7 +161,6 @@
             
             for (let key in meta) {
                 let alertText = t('demoAlert');
-                // حماية الكود من علامات التنصيص الفردية والمزدوجة
                 let safeName = meta[key].name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 
                 let clickAction = isDemo ? `showToast('${alertText}', 'error')` : `goToSubject('${key}', '${safeName}')`;
@@ -194,7 +190,6 @@
                     
                     let subKey = 'subj_' + Date.now();
                     
-                    // تأمين الكائنات بالكامل قبل الإضافة عشان المتصفح ميعملش Crash
                     if (!globalData.subjectsMeta) globalData.subjectsMeta = {};
                     if (!globalData.allData) globalData.allData = {};
                     if (!globalData.userProgress) globalData.userProgress = {};
@@ -203,7 +198,6 @@
                     globalData.allData[subKey] = {};
                     globalData.userProgress[subKey] = { total: 0, correct: 0, wrong: 0 };
                     
-                    // استخدام merge عشان ميحذفش الداتا القديمة
                     await db.collection('users').doc(currentUser.uid).set({
                         subjectsMeta: globalData.subjectsMeta,
                         allData: globalData.allData,
@@ -214,7 +208,8 @@
                     showToast(t('js_saved'));
                 } catch (error) {
                     console.error("خطأ في حفظ المادة:", error);
-                    showToast("حدث خطأ أثناء الحفظ، حاول مرة أخرى", "error");
+                    // هنا التعديل: إظهار الخطأ الفعلي اللي جاي من فايربيس
+                    showToast("خطأ السيرفر: " + error.message, "error");
                 }
             });
         }
@@ -239,7 +234,7 @@
                     showToast(t('js_deleted'));
                 } catch (error) {
                     console.error("خطأ في مسح المادة:", error);
-                    showToast("حدث خطأ أثناء المسح", "error");
+                    showToast("خطأ السيرفر: " + error.message, "error");
                 }
             });
         }
