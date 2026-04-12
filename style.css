@@ -43,6 +43,26 @@ body {
     margin: 0; 
     padding: 20px; 
     transition: background-color 0.4s ease, color 0.4s ease; 
+    cursor: default; /* منع ظهور مؤشر النص (I-beam) في الأماكن الفارغة */
+}
+
+/* ================= تحسينات الـ UX (منع التحديد ومؤشر الكتابة) ================= */
+.card, .btn, .btn-option, .icon-btn, .logo, .stat-box, .dashboard h2, .header, .quote-frame, .toast, .user-profile-badge {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    caret-color: transparent; /* إخفاء مؤشر الكتابة الوامض تماماً */
+}
+
+input, textarea, select {
+    cursor: text;
+    caret-color: var(--primary-color); /* إرجاع المؤشر داخل مربعات الإدخال فقط بلون شيك */
+}
+
+button:focus, .card:focus, .btn-option:focus {
+    outline: none; /* منع المربع الأزرق العشوائي عند الضغط */
 }
 
 /* ================= Header ================= */

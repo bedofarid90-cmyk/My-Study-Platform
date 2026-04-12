@@ -36,8 +36,21 @@ const translations = {
         examModeDesc: "دقيقة لكل سؤال، والنتيجة بتظهر في الآخر",
         
         compExamTitle: "🏆 امتحان شامل للمادة",
-        compExamDesc: "40 سؤال عشوائي من كل المحاضرات (20 اختياري و 20 صح وخطأ).",
+        compExamDesc: "اختبر نفسك في أسئلة عشوائية بالعدد والنوع اللي تحدده لتقييم مستواك الفعلي.",
+        compCountLabel: "عدد الأسئلة:",
+        compTypeLabel: "نوع الأسئلة:",
         notEnoughQs: "لا يوجد أسئلة كافية في المادة. يجب إضافة أسئلة للمحاضرات أولاً!",
+        notEnoughQsType: "الأسئلة المتاحة أقل من المطلوب. سيتم عرض المتاح!",
+        reviewBtn: "🔍 مراجعة الإجابات",
+        reviewTitle: "📋 مراجعة الامتحان",
+        yourAnsLabel: "إجابتك:",
+        correctAnsLabel: "الإجابة الصحيحة:",
+        
+        // كلمات مراجعة الأخطاء الجديدة
+        mistakesTitle: "📉 مراجعة الأخطاء",
+        mistakesDesc: "راجع الأسئلة اللي غلطت فيها قبل كدا في المادة دي عشان تثبتها في دماغك ومتغلطش فيها تاني.",
+        startMistakesBtn: "🔍 ابدأ مراجعة أخطائك",
+        noMistakes: "يا أسطورة! مفيش أي أسئلة غلط مسجلة ليك في المادة دي. 🎉",
         
         addQsBtn: "➕ إضافة أسئلة", 
         addQsDesc: "إضافة أسئلة مفردة أو باستخدام الذكاء الاصطناعي",
@@ -132,8 +145,20 @@ const translations = {
         examModeDesc: "1 min per question, results at the end",
         
         compExamTitle: "🏆 Comprehensive Exam",
-        compExamDesc: "40 random questions from all lectures (20 MCQ, 20 T/F).",
+        compExamDesc: "Test yourself with random questions of your chosen count and type.",
+        compCountLabel: "Question Count:",
+        compTypeLabel: "Question Type:",
         notEnoughQs: "Not enough questions in this subject. Add questions first!",
+        notEnoughQsType: "Available questions are less than requested. Showing what's available!",
+        reviewBtn: "🔍 Review Answers",
+        reviewTitle: "📋 Exam Review",
+        yourAnsLabel: "Your Answer:",
+        correctAnsLabel: "Correct Answer:",
+        
+        mistakesTitle: "📉 Mistakes Review",
+        mistakesDesc: "Review questions you previously answered incorrectly so you never miss them again.",
+        startMistakesBtn: "🔍 Start Review",
+        noMistakes: "Legend! No wrong questions recorded for this subject. 🎉",
         
         addQsBtn: "➕ Add Questions", 
         addQsDesc: "Add single questions or use AI",
@@ -238,7 +263,7 @@ function toggleTheme() {
 }
 
 // =========================================
-// 3. إعدادات السحابة (Firebase)
+// 3. إعدادات السحابة (Firebase) + وضع الأوفلاين (PWA)
 // =========================================
 const firebaseConfig = {
     apiKey: "AIzaSyBmQqHCyzeScuxLfRyB9KdSvM0817zML1s",
@@ -250,15 +275,34 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
+// تفعيل وضع الأوفلاين (Offline Persistence) لقاعدة البيانات
+firebase.firestore().enablePersistence()
+  .catch(function(err) {
+      if (err.code == 'failed-precondition') {
+          console.error("الأوفلاين شغال في تابة تانية.");
+      } else if (err.code == 'unimplemented') {
+          console.error("المتصفح لا يدعم وضع الأوفلاين.");
+      }
+  });
+
 const auth = firebase.auth(); 
 const db = firebase.firestore(); 
 const provider = new firebase.auth.GoogleAuthProvider();
+
+// تسجيل ملف الـ Service Worker عشان الموقع يفتح بدون نت
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('تم تفعيل وضع الأوفلاين بنجاح! 🚀', reg.scope))
+            .catch(err => console.error('فشل تفعيل الأوفلاين:', err));
+    });
+}
 
 let currentUser = null;
 let globalData = { subjectsMeta: {}, allData: {}, userProgress: {} };
 
 function loginWithGoogle() { 
-    // استبدال الـ alert بـ showToast
     auth.signInWithPopup(provider).catch(err => showToast("خطأ: " + err.message, 'error')); 
 }
 
@@ -362,7 +406,6 @@ function importData(event) {
                 if(typeof renderSubjects === 'function') renderSubjects(false);
             }
         } catch (err) {
-            // استبدال الـ alert بـ showToast
             showToast(currentLang === 'ar' ? 'يوجد خطأ، تأكد أنه ملف الداتا الخاص بالمنصة.' : 'Error. Ensure it is a valid Zaker data file.', 'error');
         }
     };
@@ -478,7 +521,6 @@ function sanitizeInput(str) {
     return temp.innerHTML; 
 }
 
-// بدء التشغيل
 window.addEventListener('DOMContentLoaded', () => {
     applyLanguage();
     if(document.getElementById('quoteText')) {

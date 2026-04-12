@@ -76,7 +76,13 @@
             <h2 data-i18n="finalResultTitle">🎯 النتيجة النهائية</h2>
             <h1 id="finalScoreText" style="font-size: 4rem; color: var(--primary-color);">0%</h1>
             <p id="examResultMessage" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 30px; line-height: 1.6;"></p>
-            <button class="btn btn-primary" onclick="window.location.href='lecture.html'" data-i18n="backToLecsBtn">🔙 رجوع للمحاضرة</button>
+            
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="window.location.href='lecture.html'" data-i18n="backToLecsBtn">🔙 رجوع للمحاضرة</button>
+                <button class="btn btn-success hidden" id="reviewBtnMain" onclick="showReview()" data-i18n="reviewBtn">🔍 مراجعة الإجابات</button>
+            </div>
+            
+            <div id="reviewContainer" style="display: none; margin-top: 40px; text-align: right; direction: rtl; border-top: 2px dashed var(--input-border); padding-top: 20px;"></div>
         </div>
     </div>
 
@@ -96,6 +102,7 @@
         
         const isExamMode = localStorage.getItem('isExamMode') === 'true';
         const isComprehensiveMode = localStorage.getItem('isComprehensiveMode') === 'true';
+        const isMistakesMode = localStorage.getItem('isMistakesMode') === 'true';
 
         let currentQIndex = 0; 
         let examScore = 0; 
@@ -123,19 +130,20 @@
                     if (doc.exists) {
                         globalData = doc.data();
                         
-                        if (!globalData.userProgress) {
-                            globalData.userProgress = {};
-                        }
+                        if (!globalData.userProgress) globalData.userProgress = {};
+                        if (!globalData.wrongQuestions) globalData.wrongQuestions = {};
+                        if (!globalData.wrongQuestions[currentSubjectKey]) globalData.wrongQuestions[currentSubjectKey] = [];
                         
                         if (!globalData.userProgress[currentSubjectKey]) {
-                            globalData.userProgress[currentSubjectKey] = { 
-                                total: 0, 
-                                correct: 0, 
-                                wrong: 0 
-                            };
+                            globalData.userProgress[currentSubjectKey] = { total: 0, correct: 0, wrong: 0 };
                         }
                         
-                        if (isComprehensiveMode) {
+                        if (isMistakesMode) {
+                            // سحب الأسئلة الخطأ للمراجعة
+                            questionsList = [...globalData.wrongQuestions[currentSubjectKey]].sort(() => 0.5 - Math.random());
+                            document.getElementById('lectureTitleQuiz').innerText = currentSubjectName + ' - ' + t('mistakesTitle');
+                        }
+                        else if (isComprehensiveMode) {
                             generateComprehensiveQuestions();
                             document.getElementById('lectureTitleQuiz').innerText = currentSubjectName + ' - ' + t('compExamTitle');
                         } else {
@@ -143,7 +151,7 @@
                                 questionsList = globalData.allData[currentSubjectKey][currentLectureName]; 
                                 document.getElementById('lectureTitleQuiz').innerText = currentSubjectName + ' - ' + currentLectureName;
                             } else { 
-                                showToast(t('noQsInLec'), 'error'); // تم الاستبدال هنا
+                                showToast(t('noQsInLec'), 'error'); 
                                 setTimeout(() => window.location.href = 'lecture.html', 1500); 
                                 return;
                             }
@@ -167,6 +175,7 @@
             
             for (let lec in lectures) {
                 lectures[lec].forEach(q => {
+                    q.userAnswer = null; 
                     if (q.type === 'mcq') {
                         allMCQ.push(q);
                     } else if (q.type === 'tf') {
@@ -178,10 +187,38 @@
             allMCQ = allMCQ.sort(() => 0.5 - Math.random());
             allTF = allTF.sort(() => 0.5 - Math.random());
             
-            let selectedMCQ = allMCQ.slice(0, 20);
-            let selectedTF = allTF.slice(0, 20);
+            const requestedCount = parseInt(localStorage.getItem('compExamCount')) || 40;
+            const requestedType = localStorage.getItem('compExamType') || 'mixed';
             
-            questionsList = [...selectedMCQ, ...selectedTF].sort(() => 0.5 - Math.random());
+            let finalQuestions = [];
+
+            if (requestedType === 'mcq') {
+                finalQuestions = allMCQ.slice(0, requestedCount);
+            } else if (requestedType === 'tf') {
+                finalQuestions = allTF.slice(0, requestedCount);
+            } else {
+                let half = Math.floor(requestedCount / 2);
+                let mcqPart = allMCQ.slice(0, half);
+                let tfPart = allTF.slice(0, requestedCount - mcqPart.length); 
+                
+                if (tfPart.length < (requestedCount - mcqPart.length)) {
+                    let remaining = requestedCount - tfPart.length;
+                    mcqPart = allMCQ.slice(0, remaining);
+                } else if (mcqPart.length < half) {
+                    let remaining = requestedCount - mcqPart.length;
+                    tfPart = allTF.slice(0, remaining);
+                }
+                finalQuestions = [...mcqPart, ...tfPart];
+            }
+            
+            questionsList = finalQuestions.sort(() => 0.5 - Math.random());
+
+            if(questionsList.length === 0) {
+                showToast(t('notEnoughQsType'), 'error');
+                setTimeout(() => window.location.href = 'lecture.html', 1500);
+            } else if (questionsList.length < requestedCount) {
+                showToast(t('notEnoughQsType'), 'success');
+            }
         }
 
         function startQuiz() {
@@ -265,20 +302,41 @@
 
         async function checkAnswer(userAnswer) {
             const currentQ = questionsList[currentQIndex]; 
+            currentQ.userAnswer = userAnswer; 
             globalData.userProgress[currentSubjectKey].total++;
             
-            if (isExamMode) {
-                if (userAnswer === currentQ.a) { 
-                    examScore++; 
-                    globalData.userProgress[currentSubjectKey].correct++; 
-                    playQuizSound('correct'); 
-                } else { 
-                    globalData.userProgress[currentSubjectKey].wrong++; 
-                    playQuizSound('wrong'); 
+            // سحب الأخطاء المسجلة
+            let wrongQs = globalData.wrongQuestions[currentSubjectKey] || [];
+            let qIndexInWrong = wrongQs.findIndex(q => q.q === currentQ.q);
+
+            if (userAnswer === currentQ.a) { 
+                if (isExamMode) examScore++; 
+                globalData.userProgress[currentSubjectKey].correct++; 
+                playQuizSound('correct'); 
+                
+                // لو جاوب صح وهو كان غلطان فيه قبل كدا، نمسحه من سجل الأخطاء
+                if (qIndexInWrong > -1) {
+                    wrongQs.splice(qIndexInWrong, 1);
                 }
+            } else { 
+                globalData.userProgress[currentSubjectKey].wrong++; 
+                playQuizSound('wrong'); 
                 
-                db.collection('users').doc(currentUser.uid).set({ userProgress: globalData.userProgress }, { merge: true });
-                
+                // لو غلط ومكنش مسجل في الأخطاء، نضيفه
+                if (qIndexInWrong === -1) {
+                    let qToSave = { ...currentQ };
+                    delete qToSave.userAnswer;
+                    wrongQs.push(qToSave);
+                }
+            }
+            
+            globalData.wrongQuestions[currentSubjectKey] = wrongQs;
+            db.collection('users').doc(currentUser.uid).set({ 
+                userProgress: globalData.userProgress,
+                wrongQuestions: globalData.wrongQuestions
+            }, { merge: true });
+
+            if (isExamMode) {
                 currentQIndex++; 
                 loadQuestion(); 
                 return;
@@ -293,24 +351,16 @@
             controlsDiv.style.gap = '10px';
 
             if (userAnswer === currentQ.a) {
-                globalData.userProgress[currentSubjectKey].correct++; 
-                playQuizSound('correct'); 
                 feedbackDiv.className = 'feedback correct';
                 feedbackDiv.innerHTML = `✅ <strong>${currentLang==='ar'?'إجابة صحيحة!':'Correct!'}</strong> <br><br> ${currentQ.explanation || ''}`;
-                
                 document.getElementById('tryAgainBtn').style.display = 'none'; 
                 document.getElementById('nextBtn').style.display = 'inline-block';
             } else {
-                globalData.userProgress[currentSubjectKey].wrong++; 
-                playQuizSound('wrong'); 
                 feedbackDiv.className = 'feedback wrong';
                 feedbackDiv.innerHTML = `❌ <strong>${currentLang==='ar'?'إجابة خاطئة!':'Wrong!'}</strong> <br><br> <strong>${currentLang==='ar'?'الإجابة الصحيحة هي:':'Correct Answer:'}</strong> ${currentQ.a} <br><br> ${currentQ.explanation || ''}`;
-                
                 document.getElementById('tryAgainBtn').style.display = 'inline-block'; 
                 document.getElementById('nextBtn').style.display = 'none';
             }
-            
-            db.collection('users').doc(currentUser.uid).set({ userProgress: globalData.userProgress }, { merge: true });
         }
 
         function endExam() {
@@ -348,8 +398,39 @@
             }
             
             document.getElementById('examResultMessage').innerText = message;
+            document.getElementById('reviewBtnMain').classList.remove('hidden');
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
             document.getElementById('examResultScreen').classList.add('active');
+        }
+
+        function showReview() {
+            const container = document.getElementById('reviewContainer');
+            container.style.display = 'block';
+            document.getElementById('reviewBtnMain').classList.add('hidden');
+            
+            container.innerHTML = `<h3 style="color: var(--primary-color); margin-bottom: 25px;" data-i18n="reviewTitle">${t('reviewTitle')}</h3>`;
+            
+            questionsList.forEach((q, i) => {
+                const isCorrect = q.userAnswer === q.a;
+                const boxColor = isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)';
+                const borderColor = isCorrect ? 'var(--success-color)' : 'var(--danger-color)';
+                const icon = isCorrect ? '✅' : '❌';
+                
+                let optsHtml = q.type === 'mcq' ? `<div style="font-size: 0.95rem; color: var(--secondary-color); margin-top: 10px; background: var(--card-bg); padding: 10px; border-radius: 8px;">${q.options.join(' <span style="color: var(--primary-color);">|</span> ')}</div>` : '';
+                
+                container.innerHTML += `
+                <div style="background: ${boxColor}; padding: 20px; border-radius: 12px; border: 1px solid ${borderColor}; margin-bottom: 20px; text-align: ${currentLang==='ar'?'right':'left'}; direction: ${currentLang==='ar'?'rtl':'ltr'};">
+                    <strong style="font-size: 1.1rem;">Q${i + 1}:</strong> <span style="font-size: 1.1rem;">${q.q}</span>
+                    ${optsHtml}
+                    <div style="margin-top: 15px; border-top: 1px dashed ${borderColor}; padding-top: 15px;">
+                        <div style="margin-bottom: 5px;"><strong data-i18n="yourAnsLabel">${t('yourAnsLabel')}</strong> <span style="font-weight: bold; color: ${borderColor};">${q.userAnswer || '-'}</span> ${icon}</div>
+                        ${!isCorrect ? `<div><strong data-i18n="correctAnsLabel">${t('correctAnsLabel')}</strong> <span style="color: var(--success-color); font-weight: bold;">${q.a}</span></div>` : ''}
+                    </div>
+                </div>`;
+            });
+
+            container.scrollIntoView({ behavior: 'smooth' });
         }
 
         function timerTick() { 
@@ -357,7 +438,7 @@
             updateTimerDisplay(); 
             if (examTimeLeft <= 0) { 
                 clearInterval(examTimerInterval); 
-                showToast(t('js_timeUp'), 'error'); // تم الاستبدال هنا
+                showToast(t('js_timeUp'), 'error'); 
                 endExam(); 
             } 
         }
