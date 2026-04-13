@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zaker - Quiz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="dark">
@@ -30,21 +30,21 @@
     <div id="quizScreen" class="screen active">
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; max-width: 850px; margin-left: auto; margin-right: auto;">
-            <button class="btn btn-secondary" id="soundToggleBtn" onclick="toggleQuizSound()" style="margin: 0; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--input-border);">🔊 الصوت شغال</button>
+            <button class="btn btn-secondary" id="soundToggleBtn" onclick="toggleQuizSound()" style="margin: 0;">🔊 الصوت شغال</button>
             <button class="btn btn-danger" onclick="cancelExam()" style="margin: 0;" data-i18n="endExamBtn">✖️ إنهاء المذاكرة</button>
         </div>
         
         <div class="quiz-container">
             
-            <h2 id="lectureTitleQuiz" style="color: var(--primary-color); border-bottom: 2px dashed var(--input-border); padding-bottom: 15px; text-align: center; margin-top: 0;">عنوان الامتحان</h2>
+            <h2 id="lectureTitleQuiz" style="color: var(--primary-color); border-bottom: 1px dashed var(--glass-border); padding-bottom: 15px; text-align: center; margin-top: 0;">عنوان الامتحان</h2>
 
             <div id="examTimerContainer" class="hidden exam-timer">
                 <span data-i18n="timeLabel">⏱️ الوقت:</span> <span id="examTimerText">00:00</span>
             </div>
             
-            <div id="normalNavControls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--input-bg); padding: 10px; border-radius: 10px;">
+            <div id="normalNavControls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--glass-bg); padding: 10px; border-radius: 14px; border: 1px solid var(--glass-border);">
                 <button class="btn btn-secondary" onclick="prevQuestion()">🔙</button>
-                <select id="questionSelect" onchange="jumpToQuestion(this.value)" style="width: auto; flex: 1; margin: 0 15px;"></select>
+                <select id="questionSelect" onchange="jumpToQuestion(this.value)" style="width: auto; flex: 1; margin: 0 15px; background: transparent; border:none;"></select>
                 <button class="btn btn-secondary" onclick="nextQuestionNav()">⏭️</button>
             </div>
             
@@ -82,7 +82,7 @@
                 <button class="btn btn-success hidden" id="reviewBtnMain" onclick="showReview()" data-i18n="reviewBtn">🔍 مراجعة الإجابات</button>
             </div>
             
-            <div id="reviewContainer" style="display: none; margin-top: 40px; text-align: right; direction: rtl; border-top: 2px dashed var(--input-border); padding-top: 20px;"></div>
+            <div id="reviewContainer" style="display: none; margin-top: 40px; text-align: right; direction: rtl; border-top: 1px dashed var(--glass-border); padding-top: 20px;"></div>
         </div>
     </div>
 
@@ -413,14 +413,14 @@
             
             questionsList.forEach((q, i) => {
                 const isCorrect = q.userAnswer === q.a;
-                const boxColor = isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)';
+                const boxColor = isCorrect ? 'rgba(7, 202, 107, 0.15)' : 'rgba(234, 33, 67, 0.15)';
                 const borderColor = isCorrect ? 'var(--success-color)' : 'var(--danger-color)';
                 const icon = isCorrect ? '✅' : '❌';
                 
-                let optsHtml = q.type === 'mcq' ? `<div style="font-size: 0.95rem; color: var(--secondary-color); margin-top: 10px; background: var(--card-bg); padding: 10px; border-radius: 8px;">${q.options.join(' <span style="color: var(--primary-color);">|</span> ')}</div>` : '';
+                let optsHtml = q.type === 'mcq' ? `<div style="font-size: 0.95rem; color: var(--secondary-color); margin-top: 10px; background: var(--input-bg); padding: 10px; border-radius: 8px;">${q.options.join(' <span style="color: var(--primary-color);">|</span> ')}</div>` : '';
                 
                 container.innerHTML += `
-                <div style="background: ${boxColor}; padding: 20px; border-radius: 12px; border: 1px solid ${borderColor}; margin-bottom: 20px; text-align: ${currentLang==='ar'?'right':'left'}; direction: ${currentLang==='ar'?'rtl':'ltr'};">
+                <div class="glass-panel" style="background: ${boxColor}; padding: 20px; border-radius: 16px; border: 1px solid ${borderColor}; margin-bottom: 20px; text-align: ${currentLang==='ar'?'right':'left'}; direction: ${currentLang==='ar'?'rtl':'ltr'};">
                     <strong style="font-size: 1.1rem;">Q${i + 1}:</strong> <span style="font-size: 1.1rem;">${q.q}</span>
                     ${optsHtml}
                     <div style="margin-top: 15px; border-top: 1px dashed ${borderColor}; padding-top: 15px;">

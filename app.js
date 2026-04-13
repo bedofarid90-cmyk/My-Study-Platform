@@ -335,12 +335,12 @@ function exportToPDF() {
     if(Object.keys(globalData.allData || {}).length === 0) return showToast(t('emptySubject'), 'error');
 
     let printContent = `<html dir="${currentLang==='ar'?'rtl':'ltr'}"><head><title>${currentLang==='ar'?'أسئلتي - ذاكر':'Zaker - Questions'}</title><style>
-        body { font-family: 'Cairo', sans-serif; padding: 40px; color: #334155; line-height: 1.8; }
-        h1 { color: #6366f1; text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 15px; font-size: 2.5rem; }
-        h2 { color: #f43f5e; margin-top: 40px; background: #f1f5f9; padding: 10px 20px; border-radius: 10px; }
-        .question { background: #ffffff; padding: 20px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #e2e8f0; border-right: 5px solid #10b981; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .options { color: #64748b; font-size: 1rem; margin-top: 12px; padding: 10px; background: #f8fafc; border-radius: 8px; }
-        .answer { color: #10b981; font-weight: bold; margin-top: 15px; font-size: 1.1rem; }
+        body { font-family: 'Cairo', 'Plus Jakarta Sans', sans-serif; padding: 40px; color: #141414; line-height: 1.8; }
+        h1 { color: #1856FF; text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 15px; font-size: 2.5rem; }
+        h2 { color: #EA2143; margin-top: 40px; background: #f1f5f9; padding: 10px 20px; border-radius: 10px; }
+        .question { background: #ffffff; padding: 20px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #e2e8f0; border-right: 5px solid #07CA6B; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .options { color: #4b5563; font-size: 1rem; margin-top: 12px; padding: 10px; background: #f8fafc; border-radius: 8px; }
+        .answer { color: #07CA6B; font-weight: bold; margin-top: 15px; font-size: 1.1rem; }
     </style></head><body>`;
     
     printContent += `<h1>${currentLang==='ar'?'📚 بنك أسئلة منصة ذاكر':'📚 Zaker Question Bank'}</h1>`;
@@ -464,7 +464,7 @@ function showToast(message, type = 'success') {
     if(!container) return; 
     
     const toast = document.createElement('div'); 
-    toast.className = `toast ${type}`; 
+    toast.className = `glass-panel toast ${type}`; 
     toast.innerText = message; 
     container.appendChild(toast); 
     

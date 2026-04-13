@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zaker - Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="dark">
@@ -41,20 +41,20 @@
         
         <div class="card-container" id="subjectsContainer"></div>
 
-        <div style="margin-top: 50px; border-top: 2px dashed var(--input-border); padding-top: 35px; text-align: center;">
+        <div class="glass-panel" style="margin-top: 50px; padding: 35px; text-align: center;">
             <h2 style="color: var(--primary-color); margin-bottom: 10px;" data-i18n="shareTitle">🤝 شارك الدحيحة (بنك الأسئلة)</h2>
             <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 25px;" data-i18n="shareDesc">
                 تقدر تنزل أسئلتك في ملف وتبعته لزمايلك يذاكروا منه، أو ترفع ملف أسئلة جاهز بتاع حد من صحابك والمنصة هتبرمجهولك أوتوماتيك!
             </p>
             <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="exportToPDF()" style="background-color: #ef4444;" data-i18n="exportPdfBtn">📄 تنزيل أسئلتي كـ PDF</button>
-                <button class="btn btn-secondary" onclick="exportData()" style="background-color: #3b82f6;" data-i18n="exportBtn">📦 تصدير الداتا لزمايلي</button>
+                <button class="btn btn-danger" onclick="exportToPDF()" data-i18n="exportPdfBtn">📄 تنزيل أسئلتي كـ PDF</button>
+                <button class="btn btn-primary" onclick="exportData()" data-i18n="exportBtn">📦 تصدير الداتا لزمايلي</button>
                 <button class="btn btn-success" onclick="document.getElementById('importFile').click()" data-i18n="importBtn">⬆️ رفع أسئلة زمايلي</button>
                 <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
             </div>
         </div>
 
-        <div class="about-section">
+        <div class="about-section glass-panel">
             <h3 data-i18n="aboutTitle">💡 ليه تستخدم المنصة دي؟</h3>
             <p data-i18n="aboutText">
                 واحدة من أقوى طرق الفهم والحفظ والمراجعة للمواد عالمياً هي طريقة <strong>(Active Recall)</strong>.. يعني إنك تحل وتختبر نفسك بدل ما تقرأ بعينك بس! <br><br>
@@ -208,7 +208,6 @@
                     showToast(t('js_saved'));
                 } catch (error) {
                     console.error("خطأ في حفظ المادة:", error);
-                    // هنا التعديل: إظهار الخطأ الفعلي اللي جاي من فايربيس
                     showToast("خطأ السيرفر: " + error.message, "error");
                 }
             });
