@@ -256,10 +256,17 @@ function toggleLanguage() {
 let currentTheme = localStorage.getItem('zaker_theme') || 'dark';
 document.body.setAttribute('data-theme', currentTheme);
 
+function updateThemeIcon() {
+    document.querySelectorAll('.icon-btn[onclick="toggleTheme()"]').forEach(btn => {
+        btn.innerText = currentTheme === 'dark' ? '🌙' : '☀️';
+    });
+}
+
 function toggleTheme() { 
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
     document.body.setAttribute('data-theme', currentTheme);
     localStorage.setItem('zaker_theme', currentTheme);
+    updateThemeIcon();
 }
 
 // =========================================
@@ -438,8 +445,8 @@ function changeQuote() {
     const textEl = document.getElementById('quoteText'); 
     if(!textEl) return;
     
-    textEl.style.opacity = 0; 
-    textEl.style.transform = 'translateY(10px)';
+    textEl.style.opacity = '0'; 
+    textEl.style.transform = 'translateY(12px)';
     
     setTimeout(() => {
         let currentArray = motivationalQuotes[currentLang] || motivationalQuotes['ar'];
@@ -451,9 +458,9 @@ function changeQuote() {
         
         lastQuoteIndex = randomIndex; 
         textEl.innerText = currentArray[randomIndex];
-        textEl.style.opacity = 1; 
+        textEl.style.opacity = '1'; 
         textEl.style.transform = 'translateY(0)';
-    }, 800); 
+    }, 650); 
 }
 
 // =========================================
@@ -484,12 +491,15 @@ function closeConfirm() {
     confirmCallback = null; 
 } 
 
-document.getElementById('confirmBtnYes').onclick = function() { 
-    if (confirmCallback) {
-        confirmCallback(); 
-    }
-    closeConfirm(); 
-};
+const _confirmYesBtn = document.getElementById('confirmBtnYes');
+if (_confirmYesBtn) {
+    _confirmYesBtn.onclick = function() { 
+        if (confirmCallback) {
+            confirmCallback(); 
+        }
+        closeConfirm(); 
+    };
+}
 
 let promptCallback = null; 
 
@@ -498,7 +508,7 @@ function customPrompt(message, defaultValue, callback) {
     const inputEl = document.getElementById('promptInput'); 
     inputEl.value = defaultValue || ''; 
     document.getElementById('promptModal').style.display = 'flex'; 
-    inputEl.focus(); 
+    setTimeout(() => inputEl.focus(), 50); 
     promptCallback = callback; 
 } 
 
@@ -507,12 +517,15 @@ function closePrompt() {
     promptCallback = null; 
 } 
 
-document.getElementById('promptBtnYes').onclick = function() { 
-    if(promptCallback) {
-        promptCallback(document.getElementById('promptInput').value); 
-    }
-    closePrompt(); 
-};
+const _promptYesBtn = document.getElementById('promptBtnYes');
+if (_promptYesBtn) {
+    _promptYesBtn.onclick = function() { 
+        if(promptCallback) {
+            promptCallback(document.getElementById('promptInput').value); 
+        }
+        closePrompt(); 
+    };
+}
 
 function sanitizeInput(str) { 
     if (!str) return ''; 
@@ -523,6 +536,7 @@ function sanitizeInput(str) {
 
 window.addEventListener('DOMContentLoaded', () => {
     applyLanguage();
+    updateThemeIcon();
     if(document.getElementById('quoteText')) {
         setInterval(changeQuote, 12000);
     }

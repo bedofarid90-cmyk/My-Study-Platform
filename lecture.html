@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaker - Lectures</title>
+    <meta name="description" content="ذاكر - إدارة المحاضرات والأسئلة لكل مادة">
+    <title>ذاكر - المحاضرات</title>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
 </head>
-<body data-theme="dark">
+<body>
 
     <div class="header">
         <div style="display: flex; align-items: center; gap: 15px;">
@@ -22,7 +23,7 @@
                 <button class="icon-btn" onclick="toggleLanguage()" title="Language">🌐</button>
                 <button class="icon-btn" onclick="toggleTheme()" title="Theme">🌙</button>
             </div>
-            <div id="userProfile" class="user-profile-badge">
+            <div id="userProfile" class="user-profile-badge hidden">
                 <img id="userImg" src="" alt="User">
                 <span id="userName"></span>
                 <button onclick="logout()" class="btn-logout" title="Logout">🚪</button>
@@ -44,7 +45,7 @@
                 <div class="stat-box"><h4 data-i18n="statWrong">إجابات خاطئة ❌</h4><span id="statWrong" class="stat-wrong">0</span></div>
                 <div class="stat-box"><h4 data-i18n="statPercent">نسبة النجاح 🎯</h4><span id="statPercent">0%</span></div>
             </div>
-            <div style="text-align: left; margin-top: 15px;">
+            <div style="margin-top: 15px;">
                 <button class="btn btn-danger" onclick="resetProgress()" data-i18n="resetStatsBtn">🔄 تصفير الإحصائيات</button>
             </div>
         </div>
@@ -265,6 +266,7 @@
                 
                 document.getElementById('userImg').src = user.photoURL;
                 document.getElementById('userName').innerText = user.displayName.split(' ')[0];
+                document.getElementById('userProfile').classList.remove('hidden');
                 document.getElementById('subjectTitle').innerText = currentSubjectName;
 
                 try {
@@ -640,7 +642,7 @@
             });
             ['dragleave', 'drop'].forEach(eventName => { 
                 dropZone.addEventListener(eventName, () => {
-                    dropZone.style.border = 'none';
+                    dropZone.style.border = '1px solid var(--glass-border)';
                 }, false); 
             });
             dropZone.addEventListener('drop', handleFileUpload, false);

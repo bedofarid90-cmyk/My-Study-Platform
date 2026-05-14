@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaker - Quiz</title>
+    <meta name="description" content="ذاكر - حل الأسئلة واختبر نفسك">
+    <title>ذاكر - الاختبار</title>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Cairo:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body data-theme="dark">
+<body>
 
     <div class="header">
         <div style="display: flex; align-items: center; gap: 15px;">
@@ -48,8 +49,11 @@
                 <button class="btn btn-secondary" onclick="nextQuestionNav()">⏭️</button>
             </div>
             
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
                 <span id="quizProgress" style="font-weight: bold; color: var(--primary-color);"></span>
+            </div>
+            <div class="quiz-progress-bar-wrap">
+                <div class="quiz-progress-bar-fill" id="quizProgressBar" style="width: 0%;"></div>
             </div>
             
             <div id="externalAiControls" style="text-align: left; margin-bottom: 15px;">
@@ -63,9 +67,9 @@
             
             <div id="feedback" class="feedback"></div>
             
-            <div id="controls" style="margin-top: 30px; display: none; direction: ltr;">
-                <button class="btn btn-success" id="nextBtn" onclick="nextQuestion()">Next ⏭️</button>
-                <button class="btn btn-danger" id="tryAgainBtn" onclick="tryAgain()" style="display: none;">🔄 Try Again</button>
+            <div id="controls" style="margin-top: 30px; display: none;">
+                <button class="btn btn-success" id="nextBtn" onclick="nextQuestion()">التالي ⏭️</button>
+                <button class="btn btn-danger" id="tryAgainBtn" onclick="tryAgain()" style="display: none;">🔄 حاول تاني</button>
             </div>
             
         </div>
@@ -217,7 +221,7 @@
                 showToast(t('notEnoughQsType'), 'error');
                 setTimeout(() => window.location.href = 'lecture.html', 1500);
             } else if (questionsList.length < requestedCount) {
-                showToast(t('notEnoughQsType'), 'success');
+                showToast(t('notEnoughQsType'), 'error');
             }
         }
 
@@ -274,6 +278,13 @@
                 
                 document.getElementById('quizProgress').innerText = (currentLang === 'ar' ? `السؤال ${currentQIndex + 1} من ${questionsList.length}` : `Question ${currentQIndex + 1} of ${questionsList.length}`);
                 
+                // Update progress bar
+                const progressBar = document.getElementById('quizProgressBar');
+                if (progressBar) {
+                    const pct = Math.round(((currentQIndex) / questionsList.length) * 100);
+                    progressBar.style.width = pct + '%';
+                }
+                
                 const currentQ = questionsList[currentQIndex]; 
                 document.getElementById('questionText').innerText = currentQ.q;
 
@@ -290,7 +301,10 @@
                 if (isExamMode) { 
                     endExam(); 
                 } else {
-                    document.getElementById('quizProgress').innerText = currentLang === 'ar' ? "تم الانتهاء" : "Finished";
+                    const progressBar = document.getElementById('quizProgressBar');
+                    if (progressBar) progressBar.style.width = '100%';
+                    
+                    document.getElementById('quizProgress').innerText = currentLang === 'ar' ? "تم الانتهاء 🎉" : "Finished 🎉";
                     document.getElementById('questionText').innerText = currentLang === 'ar' ? "🎉 لقد أتممت جميع الأسئلة بنجاح!" : "🎉 You have successfully completed all questions!";
                     
                     optionsDiv.style.display = 'none'; 
@@ -355,10 +369,12 @@
                 feedbackDiv.innerHTML = `✅ <strong>${currentLang==='ar'?'إجابة صحيحة!':'Correct!'}</strong> <br><br> ${currentQ.explanation || ''}`;
                 document.getElementById('tryAgainBtn').style.display = 'none'; 
                 document.getElementById('nextBtn').style.display = 'inline-block';
+                document.getElementById('nextBtn').innerText = currentLang === 'ar' ? 'التالي ⏭️' : 'Next ⏭️';
             } else {
                 feedbackDiv.className = 'feedback wrong';
                 feedbackDiv.innerHTML = `❌ <strong>${currentLang==='ar'?'إجابة خاطئة!':'Wrong!'}</strong> <br><br> <strong>${currentLang==='ar'?'الإجابة الصحيحة هي:':'Correct Answer:'}</strong> ${currentQ.a} <br><br> ${currentQ.explanation || ''}`;
                 document.getElementById('tryAgainBtn').style.display = 'inline-block'; 
+                document.getElementById('tryAgainBtn').innerText = currentLang === 'ar' ? '🔄 حاول تاني' : '🔄 Try Again';
                 document.getElementById('nextBtn').style.display = 'none';
             }
         }
@@ -368,11 +384,22 @@
             const totalQs = questionsList.length; 
             const percent = Math.round((examScore / totalQs) * 100);
             
+            // Complete the progress bar
+            const progressBar = document.getElementById('quizProgressBar');
+            if (progressBar) progressBar.style.width = '100%';
+            
             if (percent >= 90) {
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             }
             
-            document.getElementById('finalScoreText').innerText = `${percent}%`;
+            const scoreEl = document.getElementById('finalScoreText');
+            scoreEl.innerText = `${percent}%`;
+            // Color code the score
+            scoreEl.className = '';
+            if (percent >= 90) scoreEl.classList.add('score-legendary');
+            else if (percent >= 70) scoreEl.classList.add('score-good');
+            else if (percent >= 50) scoreEl.classList.add('score-okay');
+            else scoreEl.classList.add('score-fail');
             
             let message = "";
             if(currentLang === 'ar') {
